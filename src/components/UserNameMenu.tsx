@@ -1,4 +1,4 @@
-import {  CircleUserRound } from "lucide-react";
+import { CircleUserRound } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,8 +22,11 @@ const UserNameMenu = () => {
         {/* Add menu items here if needed */}
 
         <DropdownMenuItem>
-          <Link to={"/restaurant"} className="font-bold hover:text-orange-500">
-            Restaurant
+          <Link
+            to={"/manage-restaurant"}
+            className="font-bold hover:text-orange-500"
+          >
+            Manage Restaurant
           </Link>
         </DropdownMenuItem>
         <Separator />
