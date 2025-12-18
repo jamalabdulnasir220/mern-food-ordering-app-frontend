@@ -12,25 +12,31 @@ import { Button } from "@/components/ui/button";
 import type { Restaurant } from "@/types";
 import { useEffect } from "react";
 
-const formSchema = z.object({
-  restaurantName: z.string().min(1, "restaurant name is required"),
-  city: z.string().min(1, "city is required"),
-  country: z.string().min(1, "country is required"),
-  deliveryPrice: z.coerce.number().min(1, "delivery price is required"),
-  estimatedDeliveryTime: z.coerce.number().min(1, {
-    message: "estimated delivery time is required",
-  }),
-  cuisines: z.array(z.string()).nonempty({
-    message: "Please select at least one item",
-  }),
-  menuItems: z.array(
-    z.object({
-      name: z.string().min(1, "name is required"),
-      price: z.coerce.number().min(1, "price is required"),
-    })
-  ),
-  imageFile: z.instanceof(File, { message: "image is required" }),
-});
+const formSchema = z
+  .object({
+    restaurantName: z.string().min(1, "restaurant name is required"),
+    city: z.string().min(1, "city is required"),
+    country: z.string().min(1, "country is required"),
+    deliveryPrice: z.coerce.number().min(1, "delivery price is required"),
+    estimatedDeliveryTime: z.coerce.number().min(1, {
+      message: "estimated delivery time is required",
+    }),
+    cuisines: z.array(z.string()).nonempty({
+      message: "Please select at least one item",
+    }),
+    menuItems: z.array(
+      z.object({
+        name: z.string().min(1, "name is required"),
+        price: z.coerce.number().min(1, "price is required"),
+      })
+    ),
+    imageUrl: z.string().optional(),
+    imageFile: z.instanceof(File, { message: "image is required" }).optional(),
+  })
+  .refine((data) => data.imageUrl || data.imageFile, {
+    message: "Either image url or image file must be provided",
+    path: ["imageFile"],
+  });
 
 type RestaurantFormData = z.infer<typeof formSchema>;
 
@@ -110,8 +116,9 @@ const ManageRestaurantForm = ({ onsave, isLoading, myRestaurant }: Props) => {
       );
     });
 
-    formData.append("imageFile", formDataJSON.imageFile);
-
+    if (formDataJSON.imageFile) {
+      formData.append("imageFile", formDataJSON.imageFile);
+    }
     onsave(formData);
   };
 
