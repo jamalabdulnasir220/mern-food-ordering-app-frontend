@@ -5,6 +5,7 @@ import { Form, FormControl, FormField, FormItem } from "./ui/form";
 import { Search } from "lucide-react";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
+import { useEffect } from "react";
 
 const formSchema = z.object({
   searchQuery: z.string().min(1, "search query cannot be empty"),
@@ -16,13 +17,14 @@ interface Props {
   onSubmit: (formData: SearchForm) => void;
   placeHolder: string;
   onReset?: () => void;
+  searchQuery: string;
 }
 
-const SearchBar = ({ onSubmit, placeHolder, onReset }: Props) => {
+const SearchBar = ({ onSubmit, placeHolder, onReset, searchQuery }: Props) => {
   const form = useForm<SearchForm>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      searchQuery: "",
+      searchQuery,
     },
   });
 
@@ -36,11 +38,17 @@ const SearchBar = ({ onSubmit, placeHolder, onReset }: Props) => {
     }
   };
 
+  useEffect(() => {
+    form.reset({
+      searchQuery,
+    });
+  }, [form, searchQuery]);
+
   return (
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className={`flex flex-row items-center justify-between gap-3 flex-1 border-2 rounded-full p-3 mx-5 ${
+        className={`flex flex-row items-center justify-between gap-3 flex-1 border-2 rounded-full p-3  ${
           form.formState.errors.searchQuery && "border-red-500"
         }`}
       >
@@ -64,17 +72,18 @@ const SearchBar = ({ onSubmit, placeHolder, onReset }: Props) => {
             </FormItem>
           )}
         />
-        {/* This means there is some value in the form */}
+        {/* This means there is some value in the form
         {form.formState.isDirty && (
-          <Button
-            onClick={handleReset}
-            type="button"
-            variant={"outline"}
-            className="rounded-full"
-          >
-            Clear
-          </Button>
-        )}
+          
+        )} */}
+        <Button
+          onClick={handleReset}
+          type="button"
+          variant={"outline"}
+          className="rounded-full"
+        >
+          Reset
+        </Button>
         <Button type="submit" className="rounded-full bg-orange-500">
           Search
         </Button>
