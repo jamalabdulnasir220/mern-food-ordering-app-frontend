@@ -19,7 +19,7 @@ const MobileNav = () => {
         <Menu className="text-orange-500" />
       </SheetTrigger>
       <SheetContent className="space-y-3">
-        <SheetTitle>
+        <SheetTitle className="mt-5 flex">
           {isAuthenticated ? (
             <span className="flex items-center gap-2 font-bold">
               <CircleUserRound className="text-orange-500" />
