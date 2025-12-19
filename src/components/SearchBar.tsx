@@ -72,7 +72,7 @@ const SearchBar = ({ onSubmit, placeHolder, onReset, searchQuery }: Props) => {
             </FormItem>
           )}
         />
-        {/* This means there is some value in the form
+        {/* This means the form has been touched or there is some value in the form
         {form.formState.isDirty && (
           
         )} */}
