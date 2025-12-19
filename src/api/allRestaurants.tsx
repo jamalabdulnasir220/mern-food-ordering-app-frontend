@@ -1,5 +1,5 @@
 import type { SearchState } from "@/pages/SearchPage";
-import type { RestaurantSearchResponse } from "@/types";
+import type { Restaurant, RestaurantSearchResponse } from "@/types";
 import { useQuery } from "@tanstack/react-query";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -15,7 +15,7 @@ export const useSearchRestaurants = (
       params.set("searchQuery", searchState.searchQuery);
       params.set("page", searchState.page.toString());
       params.set("selectedCuisines", searchState.selectedCuisines.join(","));
-      params.set("sortOptions", searchState.sortOption)
+      params.set("sortOptions", searchState.sortOption);
 
       const response = await fetch(
         `${API_BASE_URL}/api/restaurants/search/${city}?${params.toString()}`
@@ -31,6 +31,26 @@ export const useSearchRestaurants = (
 
   return {
     results,
+    isLoading,
+  };
+};
+
+export const useGetRestaurant = (restaurantId?: string) => {
+  const { data: restaurant, isPending: isLoading } = useQuery({
+    queryKey: ["getRestaurant"],
+    queryFn: async (): Promise<Restaurant> => {
+      const response = await fetch(
+        `${API_BASE_URL}/api/restaurants/${restaurantId}`
+      );
+      if (!response.ok) {
+        throw new Error("Unable to get restaurant");
+      }
+      return response.json();
+    },
+    enabled: !!restaurantId
+  });
+  return {
+    restaurant,
     isLoading,
   };
 };
