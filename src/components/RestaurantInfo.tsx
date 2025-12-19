@@ -1,5 +1,4 @@
 import type { Restaurant } from "@/types";
-import React from "react";
 import {
   Card,
   CardContent,
