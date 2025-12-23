@@ -1,4 +1,4 @@
-import { Auth0Provider} from "@auth0/auth0-react";
+import { Auth0Provider, type AppState } from "@auth0/auth0-react";
 import { useNavigate } from "react-router-dom";
 
 interface AuthProviderWithNavigateProps {
@@ -17,10 +17,10 @@ const Auth0ProviderWithNavigate = ({
     throw new Error("Auth0 environment variables are not set properly.");
   }
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
-  const onRedirectCallback = () => {
-    navigate("/auth-callback");
+  const onRedirectCallback = (appState?: AppState) => {
+    navigate(appState?.returnTo || "/auth-callback");
   };
 
   return (
@@ -29,7 +29,7 @@ const Auth0ProviderWithNavigate = ({
       clientId={clientId}
       authorizationParams={{
         redirect_uri: redirectUri,
-        audience
+        audience,
       }}
       onRedirectCallback={onRedirectCallback}
     >
