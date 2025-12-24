@@ -12,11 +12,7 @@ type UpdateOrderStatusRequest = {
 
 export const useGetMyRestaurant = () => {
   const { getAccessTokenSilently } = useAuth0();
-  const {
-    data: myRestaurant,
-    isPending,
-    error,
-  } = useQuery({
+  const { data: myRestaurant, isPending } = useQuery({
     queryKey: ["fetchMyRestaurant"],
     queryFn: async (): Promise<Restaurant> => {
       const accessToken = await getAccessTokenSilently();
@@ -32,9 +28,6 @@ export const useGetMyRestaurant = () => {
       return response.json();
     },
   });
-  if (error) {
-    toast.error("Unable to fetch my restaurant");
-  }
 
   return {
     myRestaurant,
@@ -157,7 +150,7 @@ export const useUpdateMyRestaurantOrder = () => {
     isPending,
     isError,
     isSuccess,
-    reset
+    reset,
   } = useMutation({
     mutationFn: async (updateStatusOrderRequest: UpdateOrderStatusRequest) => {
       const accessToken = await getAccessTokenSilently();
@@ -184,7 +177,7 @@ export const useUpdateMyRestaurantOrder = () => {
 
   if (isError) {
     toast.error("Unable to update order");
-    reset()
+    reset();
   }
 
   if (isSuccess) {
@@ -193,6 +186,6 @@ export const useUpdateMyRestaurantOrder = () => {
 
   return {
     updateRestaurantStatus,
-    isPending
-  }
+    isPending,
+  };
 };

@@ -16,6 +16,8 @@ const ManageRestaurantPage = () => {
 
   const isEditing = !!myRestaurant;
 
+  
+
   return (
     <Tabs defaultValue="orders">
       <TabsList>
