@@ -54,11 +54,11 @@ const UserProfileForm = ({
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onsave)}
-        className="space-y-4 bg-gray-50 rounded-lg md:p-10"
+        className="space-y-4 bg-gray-50 rounded-lg p-4 md:p-10"
       >
         <div>
-          <h2 className="text-2xl font-bold">{title}</h2>
-          <FormDescription>
+          <h2 className="text-xl md:text-2xl font-bold">{title}</h2>
+          <FormDescription className="text-sm md:text-base">
             View and change your profile information here.
           </FormDescription>
         </div>
@@ -67,9 +67,9 @@ const UserProfileForm = ({
           name="email"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Email</FormLabel>
+              <FormLabel className="text-sm md:text-base">Email</FormLabel>
               <FormControl>
-                <Input {...field} disabled className="bg-white" />
+                <Input {...field} disabled className="bg-white text-sm md:text-base" />
               </FormControl>
             </FormItem>
           )}
@@ -80,9 +80,9 @@ const UserProfileForm = ({
           name="name"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Name</FormLabel>
+              <FormLabel className="text-sm md:text-base">Name</FormLabel>
               <FormControl>
-                <Input {...field} className="bg-white" />
+                <Input {...field} className="bg-white text-sm md:text-base" />
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -95,9 +95,9 @@ const UserProfileForm = ({
             name="addressLine1"
             render={({ field }) => (
               <FormItem className="flex-1">
-                <FormLabel>Address Line 1</FormLabel>
+                <FormLabel className="text-sm md:text-base">Address Line 1</FormLabel>
                 <FormControl>
-                  <Input {...field} className="bg-white" />
+                  <Input {...field} className="bg-white text-sm md:text-base" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -108,9 +108,9 @@ const UserProfileForm = ({
             name="city"
             render={({ field }) => (
               <FormItem className="flex-1">
-                <FormLabel>City</FormLabel>
+                <FormLabel className="text-sm md:text-base">City</FormLabel>
                 <FormControl>
-                  <Input {...field} className="bg-white" />
+                  <Input {...field} className="bg-white text-sm md:text-base" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -121,9 +121,9 @@ const UserProfileForm = ({
             name="country"
             render={({ field }) => (
               <FormItem className="flex-1">
-                <FormLabel>Country</FormLabel>
+                <FormLabel className="text-sm md:text-base">Country</FormLabel>
                 <FormControl>
-                  <Input {...field} className="bg-white" />
+                  <Input {...field} className="bg-white text-sm md:text-base" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -133,7 +133,7 @@ const UserProfileForm = ({
         {isLoading ? (
           <ButtonLoading />
         ) : (
-          <Button type="submit" className="bg-orange-500">
+          <Button type="submit" className="bg-orange-500 text-sm md:text-base px-6 py-2">
             {buttonText}
           </Button>
         )}

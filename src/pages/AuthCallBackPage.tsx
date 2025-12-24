@@ -5,7 +5,7 @@ import { useNavigate } from "react-router-dom";
 
 const AuthCallBackPage = () => {
   const navigate = useNavigate();
- 
+
   const { user } = useAuth0();
   const { createUser } = useCreateMYUser();
 
@@ -66,7 +66,7 @@ const AuthCallBackPage = () => {
         ></path>
       </svg>
       <span className="text-lg text-gray-700 font-medium">
-        Setting up your QuickFork account...
+        Setting up your GhanaBite account...
       </span>
     </div>
   );

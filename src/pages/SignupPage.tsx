@@ -45,10 +45,10 @@ const SignupPage = () => {
       <Card className="w-full max-w-2xl">
         <CardHeader className="text-center">
           <CardTitle className="text-3xl font-bold text-orange-600">
-            Join QuickFork
+            Join GhanaBite
           </CardTitle>
           <CardDescription className="text-lg mt-2">
-            Choose how you want to use QuickFork
+            Choose how you want to use GhanaBite
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">

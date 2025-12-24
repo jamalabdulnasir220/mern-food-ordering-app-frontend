@@ -31,13 +31,11 @@ const DetailPage = () => {
 
   const addToCart = (menuItem: MenuItem) => {
     setCartItems((prevState) => {
-      // Check if item is already in the cart
       const existingCartItem = prevState.find(
         (cartItem) => cartItem._id === menuItem._id
       );
 
       let updatedCartItems;
-      // if item is already in the cart, update the quantity
       if (existingCartItem) {
         updatedCartItems = prevState.map((item) => {
           return item._id === menuItem._id
@@ -45,7 +43,6 @@ const DetailPage = () => {
             : item;
         });
       } else {
-        // if not add it as a new cart item.
         updatedCartItems = [
           ...prevState,
           {
@@ -106,9 +103,9 @@ const DetailPage = () => {
   // Show loading UI
   if (isLoading) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[40vh]">
-        <Loader2 className="animate-spin h-12 w-12 text-orange-500 mb-4" />
-        <div className="text-lg font-semibold text-gray-600">
+      <div className="flex flex-col items-center justify-center min-h-[40vh] px-2 sm:px-4">
+        <Loader2 className="animate-spin h-10 w-10 sm:h-12 sm:w-12 text-orange-500 mb-3 sm:mb-4" />
+        <div className="text-base sm:text-lg font-semibold text-gray-600">
           Loading restaurant details...
         </div>
       </div>
@@ -118,18 +115,18 @@ const DetailPage = () => {
   // Show nice empty UI if there is no restaurant data
   if (!restaurant) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[40vh] bg-gray-50 rounded-lg p-10">
-        <PackageSearch className="h-14 w-14 text-orange-400 mb-4" />
-        <div className="text-2xl font-bold text-gray-700 mb-2">
+      <div className="flex flex-col items-center justify-center min-h-[40vh] bg-gray-50 rounded-lg p-4 sm:p-10">
+        <PackageSearch className="h-11 w-11 sm:h-14 sm:w-14 text-orange-400 mb-3 sm:mb-4" />
+        <div className="text-lg sm:text-2xl font-bold text-gray-700 mb-1 sm:mb-2">
           Restaurant not found
         </div>
-        <div className="text-gray-500 text-base mb-4">
+        <div className="text-gray-500 text-sm sm:text-base mb-3 sm:mb-4 text-center">
           We couldn't find the restaurant you're looking for.<br />
           Please try another restaurant or return to the main page.
         </div>
         <a
           href="/"
-          className="inline-block px-6 py-2 bg-orange-500 hover:bg-orange-600 transition font-bold rounded text-white"
+          className="inline-block px-4 sm:px-6 py-2 bg-orange-500 hover:bg-orange-600 transition font-bold rounded text-white text-sm sm:text-base"
         >
           Back to Home
         </a>
@@ -138,7 +135,7 @@ const DetailPage = () => {
   }
 
   return (
-    <div className="flex flex-col gap-10">
+    <div className="flex flex-col gap-7 sm:gap-10 px-2 sm:px-6 md:px-0">
       <AspectRatio ratio={16 / 5}>
         <img
           src={restaurant.imageUrl}
@@ -146,12 +143,12 @@ const DetailPage = () => {
           alt={restaurant.restaurantName + " image"}
         />
       </AspectRatio>
-      <div className="grid md:grid-cols-[4fr_2fr] gap-5 md:px-32">
-        <div className="flex flex-col gap-4">
+      <div className="grid md:grid-cols-[4fr_2fr] gap-4 sm:gap-5 md:px-32">
+        <div className="flex flex-col gap-3 sm:gap-4">
           <RestaurantInfo restaurant={restaurant} />
-          <span className="text-2xl font-bold tracking-tight">Menu</span>
+          <span className="text-lg sm:text-2xl font-bold tracking-tight">Menu</span>
           {restaurant.menuItems.length === 0 ? (
-            <div className="text-gray-500 text-lg mt-2">
+            <div className="text-gray-500 text-base sm:text-lg mt-2">
               No menu items available for this restaurant.
             </div>
           ) : (
@@ -165,7 +162,7 @@ const DetailPage = () => {
           )}
         </div>
         {/* Checkout div */}
-        <div>
+        <div className="mt-6 md:mt-0">
           <Card>
             <OrderSummary
               restaurant={restaurant}

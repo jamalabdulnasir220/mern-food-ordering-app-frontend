@@ -11,7 +11,7 @@ const SearchResultsCard = ({ restaurant }: Props) => {
   return (
     <Link
       to={`/detail/${restaurant._id}`}
-      className="grid lg:grid-cols-[2fr_3fr] gap-5 group"
+      className="grid lg:grid-cols-[2fr_3fr] gap-4 sm:gap-5 group px-2 py-3 sm:px-4 sm:py-4 rounded-md bg-white"
     >
       <AspectRatio ratio={16 / 6}>
         <img
@@ -21,25 +21,28 @@ const SearchResultsCard = ({ restaurant }: Props) => {
         />
       </AspectRatio>
       <div>
-        <h3 className="text-2xl font-bold tracking-tight mb-2 group-hover:underline">
+        <h3 className="text-lg sm:text-2xl font-bold tracking-tight mb-1 sm:mb-2 group-hover:underline">
           {restaurant.restaurantName}
         </h3>
-        <div id="card-content" className="grid md:grid-cols-2 gap-2">
-          <div className="flex flex-row flex-wrap">
+        <div
+          id="card-content"
+          className="grid md:grid-cols-2 gap-1 sm:gap-2"
+        >
+          <div className="flex flex-row flex-wrap text-xs sm:text-base mb-1">
             {restaurant.cuisines.map((cuisine, index) => (
-              <span className="flex">
+              <span className="flex items-center" key={cuisine}>
                 <span>{cuisine}</span>
-                {index < restaurant.cuisines.length - 1 && <Dot />}
+                {index < restaurant.cuisines.length - 1 && <Dot className="w-4 h-4" />}
               </span>
             ))}
           </div>
-          <div className="flex gap-2 flex-col">
+          <div className="flex gap-1 sm:gap-2 flex-col text-xs sm:text-base">
             <div className="flex items-center gap-1 text-green-600">
-              <Clock className="text-green-600" />
+              <Clock className="text-green-600 w-4 h-4 sm:w-5 sm:h-5" />
               {restaurant.estimatedDeliveryTime} mins
             </div>
             <div className="flex items-center gap-1">
-              <Banknote />
+              <Banknote className="w-4 h-4 sm:w-5 sm:h-5" />
               Delivery from GHC {(restaurant.deliveryPrice / 100).toFixed(2)}
             </div>
           </div>

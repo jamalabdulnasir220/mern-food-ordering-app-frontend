@@ -48,14 +48,18 @@ const SearchBar = ({ onSubmit, placeHolder, onReset, searchQuery }: Props) => {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className={`flex flex-row items-center justify-between gap-2 md:gap-3 border-2 rounded-full px-2 py-2 md:p-3 ${
-          form.formState.errors.searchQuery && "border-red-500"
-        }`}
+        className={`
+          flex flex-row items-center justify-between gap-1 sm:gap-2 md:gap-3
+          border-2 rounded-full
+          px-1.5 py-1 sm:px-3 sm:py-2 md:px-4 md:py-3
+          bg-white
+          ${form.formState.errors.searchQuery ? "border-red-500" : ""}
+        `}
       >
         <Search
           strokeWidth={2.5}
-          size={24}
-          className="ml-1 text-orange-500 hidden md:block"
+          size={20}
+          className="ml-0.5 text-orange-500 hidden sm:block"
         />
         <FormField
           control={form.control}
@@ -65,9 +69,17 @@ const SearchBar = ({ onSubmit, placeHolder, onReset, searchQuery }: Props) => {
               <FormControl>
                 <Input
                   {...field}
-                  className="border-none shadow-none text-base md:text-xl focus-visible:ring-0 py-2 px-2"
+                  className="
+                    border-none shadow-none
+                    text-xs
+                    sm:text-sm
+                    md:text-base
+                    md:text-xl
+                    focus-visible:ring-0
+                    py-1 px-2
+                    sm:py-2 sm:px-3
+                  "
                   placeholder={placeHolder}
-                  // Make input smaller for mobile, larger for desktop
                 />
               </FormControl>
             </FormItem>
@@ -77,13 +89,25 @@ const SearchBar = ({ onSubmit, placeHolder, onReset, searchQuery }: Props) => {
           onClick={handleReset}
           type="button"
           variant={"outline"}
-          className="rounded-full px-3 py-2 text-sm md:px-5 md:py-2 md:text-base"
+          className="
+            rounded-full
+            px-1.5 py-1
+            text-xs
+            sm:px-3 sm:py-2 sm:text-sm
+            md:px-5 md:py-2 md:text-base
+          "
         >
           Reset
         </Button>
         <Button
           type="submit"
-          className="rounded-full bg-orange-500 px-4 py-2 text-sm md:px-6 md:py-2 md:text-base"
+          className="
+            rounded-full bg-orange-500
+            px-2 py-1
+            text-xs
+            sm:px-4 sm:py-2 sm:text-sm
+            md:px-6 md:py-2 md:text-base
+          "
         >
           Search
         </Button>
