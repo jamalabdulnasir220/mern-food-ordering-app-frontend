@@ -18,7 +18,7 @@ export const useGetMyRestaurant = () => {
     error,
   } = useQuery({
     queryKey: ["fetchMyRestaurant"],
-    queryFn: async (): Promise<Restaurant | null> => {
+    queryFn: async (): Promise<Restaurant> => {
       const accessToken = await getAccessTokenSilently();
       const response = await fetch(`${API_BASE_URL}/api/my/restaurant`, {
         method: "GET",
@@ -26,10 +26,6 @@ export const useGetMyRestaurant = () => {
           Authorization: `Bearer ${accessToken}`,
         },
       });
-      if (response.status === 404) {
-        // User doesn't have a restaurant yet, return null instead of throwing
-        return null;
-      }
       if (!response.ok) {
         throw new Error("Failed to get restaurant");
       }
@@ -128,7 +124,7 @@ export const useUpdateMyRestaurant = () => {
   };
 };
 
-export const useGetMyRestaurantOrders = (enabled: boolean = true) => {
+export const useGetMyRestaurantOrders = () => {
   const { getAccessTokenSilently } = useAuth0();
 
   const { data: restaurantOrders, isPending } = useQuery({
@@ -146,10 +142,9 @@ export const useGetMyRestaurantOrders = (enabled: boolean = true) => {
       }
       return response.json();
     },
-    enabled: enabled, // Only fetch orders if restaurant exists
   });
   return {
-    restaurantOrders: restaurantOrders || [],
+    restaurantOrders,
     isPending,
   };
 };
@@ -162,7 +157,7 @@ export const useUpdateMyRestaurantOrder = () => {
     isPending,
     isError,
     isSuccess,
-    reset,
+    reset
   } = useMutation({
     mutationFn: async (updateStatusOrderRequest: UpdateOrderStatusRequest) => {
       const accessToken = await getAccessTokenSilently();
@@ -189,7 +184,7 @@ export const useUpdateMyRestaurantOrder = () => {
 
   if (isError) {
     toast.error("Unable to update order");
-    reset();
+    reset()
   }
 
   if (isSuccess) {
@@ -198,6 +193,6 @@ export const useUpdateMyRestaurantOrder = () => {
 
   return {
     updateRestaurantStatus,
-    isPending,
-  };
+    isPending
+  }
 };

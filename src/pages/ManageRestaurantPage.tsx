@@ -11,13 +11,13 @@ import ManageRestaurantForm from "@/forms/manage-restaurant-form/ManageRestauran
 const ManageRestaurantPage = () => {
   const { createRestaurant, isLoading: isCreating } = useCreateRestaurant();
   const { updateRestaurant, isLoading: isUpdating } = useUpdateMyRestaurant();
+  const { restaurantOrders } = useGetMyRestaurantOrders();
   const { myRestaurant } = useGetMyRestaurant();
-  const { restaurantOrders } = useGetMyRestaurantOrders(!!myRestaurant);
 
   const isEditing = !!myRestaurant;
 
   return (
-    <Tabs defaultValue={myRestaurant ? "orders" : "manage-restaurant"}>
+    <Tabs defaultValue="orders">
       <TabsList>
         <TabsTrigger value="orders">Orders</TabsTrigger>
         <TabsTrigger value="manage-restaurant">Manage Restaurant</TabsTrigger>
@@ -26,26 +26,16 @@ const ManageRestaurantPage = () => {
         value="orders"
         className="space-y-5 bg-gray-50 p-10 rounded-lg"
       >
-        {!myRestaurant ? (
-          <div className="text-center py-10">
-            <p className="text-lg text-gray-600">
-              Create your restaurant first to view orders.
-            </p>
-          </div>
-        ) : (
-          <>
-            <h2 className="text-2xl font-bold">
-              {restaurantOrders?.length || 0} active orders
-            </h2>
-            {restaurantOrders?.map((order) => (
-              <OrderItemCard key={order._id} order={order} />
-            ))}
-          </>
-        )}
+        <h2 className="text-2xl font-bold">
+          {restaurantOrders?.length} active orders
+        </h2>
+        {restaurantOrders?.map((order) => (
+          <OrderItemCard order={order} />
+        ))}
       </TabsContent>
       <TabsContent value="manage-restaurant">
         <ManageRestaurantForm
-          myRestaurant={myRestaurant || undefined}
+          myRestaurant={myRestaurant}
           onsave={isEditing ? updateRestaurant : createRestaurant}
           isLoading={isCreating || isUpdating}
         />
