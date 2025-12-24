@@ -9,9 +9,12 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { Link } from "react-router-dom";
 import { Separator } from "./ui/separator";
 import { Button } from "./ui/button";
+import { useGetMyUser } from "@/api/authRouter";
 
 const UserNameMenu = () => {
   const { user, logout } = useAuth0();
+  const { currentUser } = useGetMyUser();
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger className="flex items-center px-3 font-bold gap-2 hover:text-orange-500">
@@ -19,17 +22,32 @@ const UserNameMenu = () => {
         {user?.email}
       </DropdownMenuTrigger>
       <DropdownMenuContent>
-        {/* Add menu items here if needed */}
-
-        <DropdownMenuItem>
-          <Link
-            to={"/manage-restaurant"}
-            className="font-bold hover:text-orange-500"
-          >
-            Manage Restaurant
-          </Link>
-        </DropdownMenuItem>
-        <Separator />
+        {currentUser?.role === "restaurant_manager" && (
+          <>
+            <DropdownMenuItem>
+              <Link
+                to={"/manage-restaurant"}
+                className="font-bold hover:text-orange-500"
+              >
+                Manage Restaurant
+              </Link>
+            </DropdownMenuItem>
+            <Separator />
+          </>
+        )}
+        {currentUser?.role === "customer" && (
+          <>
+            <DropdownMenuItem>
+              <Link
+                to={"/order-status"}
+                className="font-bold hover:text-orange-500"
+              >
+                Order Status
+              </Link>
+            </DropdownMenuItem>
+            <Separator />
+          </>
+        )}
         <DropdownMenuItem>
           <Link
             to={"/user-profile"}

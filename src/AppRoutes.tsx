@@ -5,10 +5,12 @@ import AuthCallBackPage from "./pages/AuthCallBackPage";
 import UserProfilePage from "./pages/UserProfilePage";
 
 import ProtectRoute from "./auth/ProtectRoute";
+import RestaurantManagerRoute from "./auth/RestaurantManagerRoute";
 import ManageRestaurantPage from "./pages/ManageRestaurantPage";
 import SearchPage from "./pages/SearchPage";
 import DetailPage from "./pages/DetailPage";
 import OrderStatusPage from "./pages/OrderStatusPage";
+import SignupPage from "./pages/SignupPage";
 
 const AppRoutes = () => {
   return (
@@ -29,6 +31,7 @@ const AppRoutes = () => {
           </span>
         }
       />
+      <Route path="/signup" element={<SignupPage />} />
       <Route
         path="/search/:city"
         element={
@@ -63,7 +66,7 @@ const AppRoutes = () => {
           }
         />
       </Route>
-      <Route element={<ProtectRoute />}>
+      <Route element={<RestaurantManagerRoute />}>
         <Route
           path="/manage-restaurant"
           element={

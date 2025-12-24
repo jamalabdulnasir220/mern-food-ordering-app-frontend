@@ -48,13 +48,13 @@ const SearchBar = ({ onSubmit, placeHolder, onReset, searchQuery }: Props) => {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className={`flex flex-row items-center justify-between gap-3 border-2 rounded-full p-3  ${
+        className={`flex flex-row items-center justify-between gap-2 md:gap-3 border-2 rounded-full px-2 py-2 md:p-3 ${
           form.formState.errors.searchQuery && "border-red-500"
         }`}
       >
         <Search
           strokeWidth={2.5}
-          size={30}
+          size={24}
           className="ml-1 text-orange-500 hidden md:block"
         />
         <FormField
@@ -65,26 +65,26 @@ const SearchBar = ({ onSubmit, placeHolder, onReset, searchQuery }: Props) => {
               <FormControl>
                 <Input
                   {...field}
-                  className="border-none shadow-none text-xl focus-visible:ring-0"
+                  className="border-none shadow-none text-base md:text-xl focus-visible:ring-0 py-2 px-2"
                   placeholder={placeHolder}
+                  // Make input smaller for mobile, larger for desktop
                 />
               </FormControl>
             </FormItem>
           )}
         />
-        {/* This means the form has been touched or there is some value in the form
-        {form.formState.isDirty && (
-          
-        )} */}
         <Button
           onClick={handleReset}
           type="button"
           variant={"outline"}
-          className="rounded-full"
+          className="rounded-full px-3 py-2 text-sm md:px-5 md:py-2 md:text-base"
         >
           Reset
         </Button>
-        <Button type="submit" className="rounded-full bg-orange-500">
+        <Button
+          type="submit"
+          className="rounded-full bg-orange-500 px-4 py-2 text-sm md:px-6 md:py-2 md:text-base"
+        >
           Search
         </Button>
       </form>

@@ -9,6 +9,7 @@ const API_BASE_URL =
 interface CreateUserRequest {
   auth0Id: string;
   email: string;
+  role: "customer" | "restaurant_manager";
 }
 
 interface FormDataToUpdate {

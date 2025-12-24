@@ -5,6 +5,7 @@ export type User = {
   addressLine1: string;
   country: string;
   city: string;
+  role: "customer" | "restaurant_manager";
 };
 
 export type MenuItem = {

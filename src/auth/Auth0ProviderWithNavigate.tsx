@@ -20,7 +20,9 @@ const Auth0ProviderWithNavigate = ({
   const navigate = useNavigate();
 
   const onRedirectCallback = (appState?: AppState) => {
-    navigate(appState?.returnTo || "/auth-callback");
+    navigate(appState?.returnTo || "/auth-callback", {
+      state: appState,
+    });
   };
 
   return (
@@ -32,6 +34,7 @@ const Auth0ProviderWithNavigate = ({
         audience,
       }}
       onRedirectCallback={onRedirectCallback}
+      cacheLocation="localstorage"
     >
       {children}
     </Auth0Provider>

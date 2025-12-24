@@ -6,7 +6,8 @@ import SearchResultInfo from "@/components/SearchResultInfo";
 import SearchResultsCard from "@/components/SearchResultsCard";
 import SortOptionDropdown from "@/components/SortOptionDropdown";
 import { useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
+import { Loader2, Search } from "lucide-react"; // Using lucide-react for icons
 
 export type SearchState = {
   searchQuery: string;
@@ -17,6 +18,7 @@ export type SearchState = {
 
 const SearchPage = () => {
   const { city } = useParams();
+  const navigate = useNavigate();
   const [searchState, setSearchState] = useState<SearchState>({
     searchQuery: "",
     page: 1,
@@ -62,18 +64,55 @@ const SearchPage = () => {
     setSearchState((prevState: SearchState) => ({
       ...prevState,
       searchQuery: "",
+      selectedCuisines: [],
       page: 1,
     }));
   };
 
+  // Show loading animation if loading
   if (isLoading) {
-    return <span>Loading....</span>;
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[40vh]">
+        <Loader2 className="animate-spin h-12 w-12 text-orange-500 mb-4" />
+        <span className="text-lg font-semibold text-gray-600">
+          Searching for restaurants...
+        </span>
+      </div>
+    );
   }
 
-  if (!results?.data || !city) {
-    return <span>No results found.</span>;
+  // Show nice empty UI if there are 0 results, or if data not available
+  if (!results?.data || !city || results.data.length === 0) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[40vh] bg-gray-50 rounded-lg p-10">
+        <Search className="h-14 w-14 text-orange-400 mb-4" />
+        <div className="text-2xl font-bold text-gray-700 mb-2">
+          No restaurants found
+        </div>
+        <div className="text-gray-500 text-base mb-4 text-center">
+          {city
+            ? `Try searching with a different name, cuisine, or adjust your filters for "${city}".`
+            : "Please select a city or update your search terms."}
+        </div>
+        <div className="flex flex-col sm:flex-row gap-2">
+          <button
+            className="inline-block px-6 py-2 bg-orange-500 hover:bg-orange-600 transition font-bold rounded text-white"
+            onClick={resetSearch}
+          >
+            Reset Search
+          </button>
+          <button
+            className="inline-block px-6 py-2 bg-gray-200 hover:bg-orange-100 transition font-bold rounded text-orange-600"
+            onClick={() => navigate("/")}
+          >
+            Go to Homepage
+          </button>
+        </div>
+      </div>
+    );
   }
 
+  // Main content if results exist
   return (
     <div className="grid grid-cols-1 lg:grid-cols-[250px_1fr] gap-5">
       <div id="cuisines-list">
@@ -99,7 +138,7 @@ const SearchPage = () => {
           />
         </div>
         {results.data.map((restaurant) => (
-          <SearchResultsCard restaurant={restaurant} />
+          <SearchResultsCard key={restaurant._id} restaurant={restaurant} />
         ))}
         <PaginationSelector
           page={results.pagination.page}
