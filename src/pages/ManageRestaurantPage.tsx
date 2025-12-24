@@ -18,6 +18,8 @@ const ManageRestaurantPage = () => {
 
   
 
+  
+
   return (
     <Tabs defaultValue="orders">
       <TabsList>
