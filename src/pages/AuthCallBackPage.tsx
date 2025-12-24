@@ -5,7 +5,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 
 const AuthCallBackPage = () => {
   const navigate = useNavigate();
-  const location = useLocation();
+ 
   const { user } = useAuth0();
   const { createUser } = useCreateMYUser();
 
