@@ -39,6 +39,7 @@ export const useGetMyOrders = () => {
 
       return response.json();
     },
+    refetchInterval: 5000,
   });
 
   return {
