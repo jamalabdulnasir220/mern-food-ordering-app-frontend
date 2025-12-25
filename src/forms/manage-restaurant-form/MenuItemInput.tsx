@@ -17,7 +17,7 @@ interface Props {
 const MenuItemInput = ({ index, removeMenuItem }: Props) => {
   const { control } = useFormContext();
   return (
-    <div className="flex flex-row items-end gap-2">
+    <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr_2fr_auto] gap-3 md:gap-2 items-end border-b pb-4 md:pb-2 md:border-b-0">
       <FormField
         control={control}
         name={`menuItems.${index}.name`}
@@ -45,7 +45,7 @@ const MenuItemInput = ({ index, removeMenuItem }: Props) => {
               Price (GHC) <FormMessage />
             </FormLabel>
             <FormControl>
-              <Input {...field} placeholder="8.00" className="bg-white" />
+              <Input {...field} type="number" step="0.01" min="0" placeholder="8.00" className="bg-white" />
             </FormControl>
           </FormItem>
         )}
@@ -79,7 +79,7 @@ const MenuItemInput = ({ index, removeMenuItem }: Props) => {
       <Button
         type="button"
         onClick={removeMenuItem}
-        className="bg-red-500 max-h-fit mt-8" // Added margin top to align with inputs
+        className="bg-red-500 w-full md:w-auto md:max-h-fit"
       >
         Remove
       </Button>

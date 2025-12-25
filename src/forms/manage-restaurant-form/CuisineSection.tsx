@@ -13,7 +13,7 @@ const CuisineSection = () => {
   return (
     <div className="space-y-2">
       <div>
-        <h2 className="text-2xl font-bold">Cuisines</h2>
+        <h2 className="text-xl sm:text-2xl font-bold">Cuisines</h2>
         <FormDescription>
           Select the cuisines that your restaurant serves
         </FormDescription>
@@ -23,7 +23,7 @@ const CuisineSection = () => {
         name="cuisines"
         render={({ field }) => (
           <FormItem>
-            <div className="grid md:grid-cols-5 gap-1">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-2">
               {cuisineList.map((cuisineItem) => (
                 <CuisineCheckbox key={cuisineItem} cuisine={cuisineItem} field={field} />
               ))}
