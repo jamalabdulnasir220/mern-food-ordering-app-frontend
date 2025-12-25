@@ -6,6 +6,7 @@ import UserProfilePage from "./pages/UserProfilePage";
 
 import ProtectRoute from "./auth/ProtectRoute";
 import RestaurantManagerRoute from "./auth/RestaurantManagerRoute";
+import CustomerRoute from "./auth/CustomerRoute";
 import ManageRestaurantPage from "./pages/ManageRestaurantPage";
 import SearchPage from "./pages/SearchPage";
 import DetailPage from "./pages/DetailPage";
@@ -35,22 +36,24 @@ const AppRoutes = () => {
         }
       />
       <Route path="/signup" element={<SignupPage />} />
-      <Route
-        path="/search/:city"
-        element={
-          <Layout showHero={false}>
-            <SearchPage />
-          </Layout>
-        }
-      />
-      <Route
-        path="/detail/:restaurantId"
-        element={
-          <Layout showHero={false}>
-            <DetailPage />
-          </Layout>
-        }
-      />
+      <Route element={<CustomerRoute />}>
+        <Route
+          path="/search/:city"
+          element={
+            <Layout showHero={false}>
+              <SearchPage />
+            </Layout>
+          }
+        />
+        <Route
+          path="/detail/:restaurantId"
+          element={
+            <Layout showHero={false}>
+              <DetailPage />
+            </Layout>
+          }
+        />
+      </Route>
       <Route element={<ProtectRoute />}>
         <Route
           path="/order-status"

@@ -37,7 +37,11 @@ const CheckoutButton = ({
   };
 
   // Show a nice loading button when anything is loading
-  if (isAuthLoading || isUserLoading || isCheckoutLoading) {
+  // Note: isUserLoading (isPending) might be true if query is disabled (when not authenticated),
+  // so we only check it if we are authenticated.
+  const isActuallyLoading = isAuthLoading || isCheckoutLoading || (isAuthenticated && isUserLoading);
+
+  if (isActuallyLoading) {
     return (
       <Button
         disabled
