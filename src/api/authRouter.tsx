@@ -97,7 +97,7 @@ export const useUpdateMyUser = () => {
 };
 
 export const useGetMyUser = () => {
-  const { getAccessTokenSilently } = useAuth0();
+  const { getAccessTokenSilently, isAuthenticated } = useAuth0();
   const {
     data: currentUser,
     isPending,
@@ -120,10 +120,20 @@ export const useGetMyUser = () => {
 
       return response.json();
     },
+    enabled: isAuthenticated, // Only run query when user is authenticated
+    retry: false, // Don't retry on failure
   });
 
-  if (error) {
-    toast.error(error.toString());
+  // Only show error toast for non-authentication errors
+  if (error && isAuthenticated) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    // Don't show toast for login/authentication related errors
+    if (
+      !errorMessage.toLowerCase().includes("login") &&
+      !errorMessage.toLowerCase().includes("unauthorized")
+    ) {
+      toast.error(errorMessage);
+    }
   }
 
   return {

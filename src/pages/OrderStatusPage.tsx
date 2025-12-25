@@ -41,19 +41,41 @@ const OrderStatusPage = () => {
   }
 
   return (
-    <div className="space-y-6 sm:space-y-10 px-2 sm:px-4 md:px-0">
+    <div className="space-y-6 sm:space-y-8 px-2 sm:px-4 md:px-0 pb-8">
+      <div className="mb-6 sm:mb-8">
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 tracking-tight">
+          Your Orders
+        </h1>
+        <p className="text-gray-600 text-sm sm:text-base mt-2">
+          Track the status of your recent orders
+        </p>
+      </div>
       {orders.map((order) => (
-        <div key={order._id} className="space-y-6 sm:space-y-10 bg-gray-50 p-4 sm:p-10 rounded-lg">
-          <OrderStatusHeader order={order} />
-          <div className="grid gap-6 sm:gap-10 md:grid-cols-2">
-            <OrderStatusDetail order={order} />
-            <AspectRatio ratio={16 / 5}>
-              <img
-                src={order.restaurant.imageUrl}
-                className="w-full h-full object-cover rounded-md"
-                alt={order.restaurant.restaurantName + " image"}
-              />
-            </AspectRatio>
+        <div
+          key={order._id}
+          className="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300"
+        >
+          <div className="bg-gradient-to-r from-orange-50 to-orange-100/50 px-4 sm:px-6 py-4 border-b border-orange-100">
+            <OrderStatusHeader order={order} />
+          </div>
+          <div className="p-4 sm:p-6">
+            <div className="grid gap-6 sm:gap-8 md:grid-cols-2">
+              <OrderStatusDetail order={order} />
+              <div className="relative rounded-lg overflow-hidden shadow-md border border-gray-200 h-full w-full flex">
+                <AspectRatio ratio={16 / 5} className="w-full h-full">
+                  <img
+                    src={order.restaurant.imageUrl}
+                    className="absolute inset-0 w-full h-full object-cover"
+                    alt={order.restaurant.restaurantName + " image"}
+                  />
+                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent px-3 py-2 sm:px-4 sm:py-2.5 flex items-end">
+                    <p className="text-white font-bold text-sm sm:text-base m-0 leading-tight">
+                      {order.restaurant.restaurantName}
+                    </p>
+                  </div>
+                </AspectRatio>
+              </div>
+            </div>
           </div>
         </div>
       ))}

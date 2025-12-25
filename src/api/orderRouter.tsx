@@ -22,7 +22,7 @@ type CheckoutSessionRequest = {
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export const useGetMyOrders = () => {
-  const { getAccessTokenSilently } = useAuth0();
+  const { getAccessTokenSilently, isAuthenticated } = useAuth0();
 
   const { data: orders, isPending } = useQuery({
     queryKey: ["fetchOrders"],
@@ -39,6 +39,7 @@ export const useGetMyOrders = () => {
 
       return response.json();
     },
+    enabled: isAuthenticated, // Only run query when user is authenticated
     refetchInterval: 5000,
   });
 

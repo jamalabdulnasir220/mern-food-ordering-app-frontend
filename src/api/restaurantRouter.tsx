@@ -1,6 +1,6 @@
 import type { Order, Restaurant } from "@/types";
 import { useAuth0 } from "@auth0/auth0-react";
-import { useMutation, useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -144,6 +144,7 @@ export const useGetMyRestaurantOrders = () => {
 
 export const useUpdateMyRestaurantOrder = () => {
   const { getAccessTokenSilently } = useAuth0();
+  const queryClient = useQueryClient();
 
   const {
     mutateAsync: updateRestaurantStatus,
@@ -172,6 +173,12 @@ export const useUpdateMyRestaurantOrder = () => {
       }
 
       return response.json();
+    },
+    onSuccess: () => {
+      // Invalidate restaurant orders query to refetch with updated data
+      queryClient.invalidateQueries({ queryKey: ["fetchRestaurantOrders"] });
+      // Also invalidate customer orders query in case they're viewing their orders
+      queryClient.invalidateQueries({ queryKey: ["fetchOrders"] });
     },
   });
 
