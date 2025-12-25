@@ -3,7 +3,7 @@ import { Button } from "./ui/button";
 import UserNameMenu from "./UserNameMenu";
 import { Link } from "react-router-dom";
 import { useGetMyUser } from "@/api/authRouter";
-import { BadgeCheck } from "lucide-react";
+import { BadgeCheck, ShieldCheck } from "lucide-react";
 
 const MainNav = () => {
   const { loginWithRedirect, isAuthenticated } = useAuth0();
@@ -21,6 +21,16 @@ const MainNav = () => {
             >
               <BadgeCheck className="w-5 h-5 text-orange-500" />
               <span>Order Status</span>
+            </Link>
+          )}
+          {currentUser?.role === "admin" && (
+            <Link
+              to={"/admin"}
+              className="flex items-center gap-1 px-4 py-2 rounded-lg bg-orange-100 text-orange-600 font-semibold transition 
+                         hover:bg-orange-200 hover:text-orange-700 shadow-sm"
+            >
+              <ShieldCheck className="w-5 h-5 text-orange-500" />
+              <span>Admin Dashboard</span>
             </Link>
           )}
           <UserNameMenu />

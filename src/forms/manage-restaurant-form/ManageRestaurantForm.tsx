@@ -28,6 +28,8 @@ const formSchema = z
       z.object({
         name: z.string().min(1, "name is required"),
         price: z.coerce.number().min(1, "price is required"),
+        imageFile: z.instanceof(File).optional(),
+        imageUrl: z.string().optional(),
       })
     ),
     imageUrl: z.string().optional(),
@@ -74,6 +76,7 @@ const ManageRestaurantForm = ({ onsave, isLoading, myRestaurant }: Props) => {
     const menuItemsFormatted = myRestaurant.menuItems.map((item) => ({
       ...item,
       price: parseInt((item.price / 100).toFixed(2)),
+      imageUrl: item.imageUrl,
     }));
 
     const updatedRestaurant = {
@@ -114,6 +117,12 @@ const ManageRestaurantForm = ({ onsave, isLoading, myRestaurant }: Props) => {
         `menuItems[${index}][price]`,
         (menuItem.price * 100).toString()
       );
+      if (menuItem.imageUrl) {
+        formData.append(`menuItems[${index}][imageUrl]`, menuItem.imageUrl);
+      }
+      if (menuItem.imageFile instanceof File) {
+        formData.append(`menuItems[${index}][imageFile]`, menuItem.imageFile);
+      }
     });
 
     if (formDataJSON.imageFile) {

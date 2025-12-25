@@ -50,10 +50,36 @@ const MenuItemInput = ({ index, removeMenuItem }: Props) => {
           </FormItem>
         )}
       />
+      
+      <FormField
+        control={control}
+        name={`menuItems.${index}.imageFile`}
+        render={({ field: { value, onChange, ...fieldProps } }) => (
+          <FormItem>
+            <FormLabel className="flex items-center gap-1">
+              Image
+            </FormLabel>
+            <FormControl>
+               <Input
+                  {...fieldProps}
+                  className="bg-white"
+                  type="file"
+                  accept=".jpg, .jpeg, .png"
+                  onChange={(event) => {
+                    onChange(
+                      event.target.files ? event.target.files[0] : null
+                    );
+                  }}
+                />
+            </FormControl>
+          </FormItem>
+        )}
+      />
+
       <Button
         type="button"
         onClick={removeMenuItem}
-        className="bg-red-500 max-h-fit"
+        className="bg-red-500 max-h-fit mt-8" // Added margin top to align with inputs
       >
         Remove
       </Button>
