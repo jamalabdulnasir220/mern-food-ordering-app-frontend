@@ -12,6 +12,8 @@ import DetailPage from "./pages/DetailPage";
 import OrderStatusPage from "./pages/OrderStatusPage";
 import SignupPage from "./pages/SignupPage";
 import FavoritesPage from "./pages/FavoritesPage";
+import AdminRoute from "./auth/AdminRoute";
+import AdminDashboardPage from "./pages/AdminDashboardPage";
 
 const AppRoutes = () => {
   return (
@@ -81,6 +83,16 @@ const AppRoutes = () => {
           element={
             <Layout>
               <ManageRestaurantPage />
+            </Layout>
+          }
+        />
+      </Route>
+      <Route element={<AdminRoute />}>
+        <Route
+          path="/admin"
+          element={
+            <Layout>
+              <AdminDashboardPage />
             </Layout>
           }
         />

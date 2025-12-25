@@ -5,7 +5,8 @@ export type User = {
   addressLine1: string;
   country: string;
   city: string;
-  role: "customer" | "restaurant_manager";
+  role: "customer" | "restaurant_manager" | "admin";
+  applicationStatus?: "pending" | "approved" | "rejected";
   favorites?: string[];
 };
 
@@ -13,6 +14,7 @@ export type MenuItem = {
   _id: string;
   name: string;
   price: number;
+  imageUrl?: string;
 };
 
 export type Restaurant = {

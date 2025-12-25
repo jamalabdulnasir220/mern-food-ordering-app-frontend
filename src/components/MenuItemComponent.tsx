@@ -19,6 +19,13 @@ const MenuItemComponent = ({ menuItem, addToCart }: Props) => {
         if (e.key === "Enter") addToCart();
       }}
     >
+      {menuItem.imageUrl && (
+        <img
+          src={menuItem.imageUrl}
+          alt={menuItem.name}
+          className="w-20 h-20 sm:w-24 sm:h-24 object-cover rounded-md"
+        />
+      )}
       <div className="flex-1">
         <CardHeader className="p-0 mb-0.5 sm:mb-1">
           <CardTitle className="text-base sm:text-lg font-semibold text-gray-800 group-hover:text-orange-700 transition-colors">
