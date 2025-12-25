@@ -14,7 +14,7 @@ const DetailSection = () => {
   return (
     <div className="space-y-2">
       <div>
-        <h2 className="text-2xl font-bold">Details</h2>
+        <h2 className="text-xl sm:text-2xl font-bold">Details</h2>
         <FormDescription>
           Enter the details about your restaurant
         </FormDescription>
@@ -32,7 +32,7 @@ const DetailSection = () => {
           </FormItem>
         )}
       />
-      <div className="flex gap-4">
+      <div className="flex flex-col sm:flex-row gap-4">
         <FormField
           control={control}
           name="city"
@@ -64,10 +64,10 @@ const DetailSection = () => {
         control={control}
         name="deliveryPrice"
         render={({ field }) => (
-          <FormItem className="max-w-[25%]">
+          <FormItem className="w-full sm:w-auto sm:max-w-[25%]">
             <FormLabel>Delivery Price (GHC)</FormLabel>
             <FormControl>
-              <Input {...field} className="bg-white" placeholder="1.50"/>
+              <Input {...field} type="number" step="0.01" min="0" className="bg-white" placeholder="1.50"/>
             </FormControl>
             <FormMessage />
           </FormItem>
@@ -77,10 +77,10 @@ const DetailSection = () => {
         control={control}
         name="estimatedDeliveryTime"
         render={({ field }) => (
-          <FormItem className="max-w-[25%]">
+          <FormItem className="w-full sm:w-auto sm:max-w-[25%]">
             <FormLabel>Estimated Delivery Time (minutes)</FormLabel>
             <FormControl>
-              <Input {...field} className="bg-white" placeholder="30"/>
+              <Input {...field} type="number" min="1" className="bg-white" placeholder="30"/>
             </FormControl>
             <FormMessage />
           </FormItem>
