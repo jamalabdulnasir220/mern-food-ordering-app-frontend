@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth0 } from "@auth0/auth0-react";
 
-const DEFAULT_CITY = "accra";
 
 const Homepage = () => {
   const navigate = useNavigate();
@@ -15,9 +14,7 @@ const Homepage = () => {
     });
   };
 
-  const handleBrowseRestaurants = () => {
-    navigate(`/search/${DEFAULT_CITY}`);
-  };
+
 
   return (
     <div className="flex flex-col gap-12 mx-2 sm:mx-4 md:mx-5"> {/* Adjust horizontal padding */}
@@ -71,12 +68,6 @@ const Homepage = () => {
             <span className="text-orange-400 font-semibold text-sm sm:text-base">
               Amazing offers &amp; new restaurants added weekly!
             </span>
-            <Button
-              onClick={handleBrowseRestaurants}
-              className="inline-block bg-orange-500 text-white px-4 sm:px-6 py-2 rounded font-bold hover:bg-orange-600 transition text-sm sm:text-base w-full sm:w-auto"
-            >
-              Browse Restaurants
-            </Button>
           </div>
         </div>
       </div>
