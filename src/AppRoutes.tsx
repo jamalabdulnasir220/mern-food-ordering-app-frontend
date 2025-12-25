@@ -1,5 +1,7 @@
 import { Navigate, Route, Routes } from "react-router-dom";
-import Layout from "./layout/Layout";
+import CustomerLayout from "./layout/CustomerLayout";
+import ManagerLayout from "./layout/ManagerLayout";
+import AdminLayout from "./layout/AdminLayout";
 import Homepage from "./pages/Homepage";
 import AuthCallBackPage from "./pages/AuthCallBackPage";
 import UserProfilePage from "./pages/UserProfilePage";
@@ -15,6 +17,8 @@ import SignupPage from "./pages/SignupPage";
 import FavoritesPage from "./pages/FavoritesPage";
 import AdminRoute from "./auth/AdminRoute";
 import AdminDashboardPage from "./pages/AdminDashboardPage";
+import ManagerHomepage from "./pages/ManagerHomepage";
+import ManagerDashboardGuard from "./components/ManagerDashboardGuard";
 
 const AppRoutes = () => {
   return (
@@ -22,9 +26,9 @@ const AppRoutes = () => {
       <Route
         path="/"
         element={
-          <Layout showHero={true}>
+          <CustomerLayout showHero={true}>
             <Homepage />
-          </Layout>
+          </CustomerLayout>
         }
       />
       <Route
@@ -40,17 +44,17 @@ const AppRoutes = () => {
         <Route
           path="/search/:city"
           element={
-            <Layout showHero={false}>
+            <CustomerLayout showHero={false}>
               <SearchPage />
-            </Layout>
+            </CustomerLayout>
           }
         />
         <Route
           path="/detail/:restaurantId"
           element={
-            <Layout showHero={false}>
+            <CustomerLayout showHero={false}>
               <DetailPage />
-            </Layout>
+            </CustomerLayout>
           }
         />
       </Route>
@@ -58,35 +62,45 @@ const AppRoutes = () => {
         <Route
           path="/order-status"
           element={
-            <Layout>
+            <CustomerLayout>
               <OrderStatusPage />
-            </Layout>
+            </CustomerLayout>
           }
         />
         <Route
           path="/user-profile"
           element={
-            <Layout>
+            <CustomerLayout>
               <UserProfilePage />
-            </Layout>
+            </CustomerLayout>
           }
         />
         <Route
           path="/favorites"
           element={
-            <Layout>
+            <CustomerLayout>
               <FavoritesPage />
-            </Layout>
+            </CustomerLayout>
           }
         />
       </Route>
       <Route element={<RestaurantManagerRoute />}>
         <Route
+          path="/manager-dashboard"
+          element={
+            <ManagerLayout>
+              <ManagerDashboardGuard>
+                <ManagerHomepage />
+              </ManagerDashboardGuard>
+            </ManagerLayout>
+          }
+        />
+        <Route
           path="/manage-restaurant"
           element={
-            <Layout>
+            <ManagerLayout>
               <ManageRestaurantPage />
-            </Layout>
+            </ManagerLayout>
           }
         />
       </Route>
@@ -94,9 +108,9 @@ const AppRoutes = () => {
         <Route
           path="/admin"
           element={
-            <Layout>
+            <AdminLayout>
               <AdminDashboardPage />
-            </Layout>
+            </AdminLayout>
           }
         />
       </Route>

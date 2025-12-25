@@ -2,22 +2,22 @@ import SearchBar, { type SearchForm } from "@/components/SearchBar";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { useAuth0 } from "@auth0/auth0-react";
-
-
 import { useGetMyUser } from "@/api/authRouter";
-import ManagerHomepage from "./ManagerHomepage";
 
 const Homepage = () => {
   const navigate = useNavigate();
   const { isAuthenticated } = useAuth0();
   const { currentUser } = useGetMyUser();
 
+  // Redirect managers and admins to their respective dashboards
   if (currentUser?.role === "restaurant_manager") {
-      return <ManagerHomepage />;
+      navigate("/manager-dashboard");
+      return null;
   }
 
   if (currentUser?.role === "admin") {
       navigate("/admin");
+      return null;
   }
 
   const handleSearchBarSubmit = (searchFormValue: SearchForm) => {

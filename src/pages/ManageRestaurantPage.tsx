@@ -13,13 +13,35 @@ import {
   UtensilsCrossed,
   ClipboardList,
 } from "lucide-react";
+import { useGetMyUser } from "@/api/authRouter";
+import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 
 const ManageRestaurantPage = () => {
+  const navigate = useNavigate()
   const { createRestaurant, isLoading: isCreating } = useCreateRestaurant();
   const { updateRestaurant, isLoading: isUpdating } = useUpdateMyRestaurant();
+  const { myRestaurant, isPending: isGetRestaurantLoading } = useGetMyRestaurant();
   const { restaurantOrders, isPending: isLoadingOrders } =
-    useGetMyRestaurantOrders();
-  const { myRestaurant } = useGetMyRestaurant();
+    useGetMyRestaurantOrders({ enabled: !!myRestaurant });
+  const { currentUser } = useGetMyUser();
+
+  const handleCreateRestaurant = (restaurantFormData: FormData) => {
+    if (currentUser?.applicationStatus !== "approved") {
+      toast.error("Your account has not been approved yet. Please contact admin for approval.");
+      return;
+    }
+    createRestaurant(restaurantFormData);
+    navigate("/manager-dashboard");
+  };
+
+  const handleUpdateRestaurant = (restaurantFormData: FormData) => {
+      if (currentUser?.applicationStatus !== "approved") {
+        toast.error("Your account has not been approved yet. Please contact admin for approval.");
+        return;
+      }
+      updateRestaurant(restaurantFormData);
+  };
 
   const isEditing = !!myRestaurant;
 
@@ -39,7 +61,7 @@ const ManageRestaurantPage = () => {
         </p>
       </div>
 
-      <Tabs defaultValue="orders" className="w-full">
+      <Tabs defaultValue="manage-restaurant" className="w-full">
         <TabsList className="grid w-full grid-cols-2 bg-gray-100 p-1 rounded-lg">
           <TabsTrigger
             value="orders"
@@ -63,7 +85,24 @@ const ManageRestaurantPage = () => {
         </TabsList>
 
         <TabsContent value="orders" className="mt-6">
-          {isLoadingOrders ? (
+          {isGetRestaurantLoading ? (
+            <div className="flex flex-col items-center justify-center min-h-[40vh] bg-gray-50 rounded-xl p-8">
+              <Loader2 className="animate-spin h-10 w-10 sm:h-12 sm:w-12 text-orange-500 mb-3 sm:mb-4" />
+              <div className="text-base sm:text-lg font-semibold text-gray-600">
+                Loading restaurant data...
+              </div>
+            </div>
+          ) : !myRestaurant ? (
+             <div className="flex flex-col items-center justify-center min-h-[40vh] bg-gray-50 rounded-xl p-8">
+              <UtensilsCrossed className="h-16 w-16 sm:h-20 sm:w-20 text-gray-300 mb-4" />
+              <div className="text-xl sm:text-2xl font-bold text-gray-700 mb-2">
+                No Restaurant Found
+              </div>
+              <div className="text-gray-500 text-sm sm:text-base text-center max-w-md">
+                Create your restaurant in the "Restaurant Details" tab to start receiving orders.
+              </div>
+            </div>
+          ) : isLoadingOrders ? (
             <div className="flex flex-col items-center justify-center min-h-[40vh] bg-gray-50 rounded-xl p-8">
               <Loader2 className="animate-spin h-10 w-10 sm:h-12 sm:w-12 text-orange-500 mb-3 sm:mb-4" />
               <div className="text-base sm:text-lg font-semibold text-gray-600">
@@ -119,8 +158,8 @@ const ManageRestaurantPage = () => {
 
         <TabsContent value="manage-restaurant" className="mt-6">
           <ManageRestaurantForm
-            myRestaurant={myRestaurant}
-            onsave={isEditing ? updateRestaurant : createRestaurant}
+            restaurant={myRestaurant}
+            onSave={isEditing ? handleUpdateRestaurant : handleCreateRestaurant}
             isLoading={isCreating || isUpdating}
           />
         </TabsContent>

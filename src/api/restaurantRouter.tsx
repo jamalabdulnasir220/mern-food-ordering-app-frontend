@@ -12,7 +12,7 @@ type UpdateOrderStatusRequest = {
 
 export const useGetMyRestaurant = () => {
   const { getAccessTokenSilently } = useAuth0();
-  const { data: myRestaurant, isPending } = useQuery({
+  const { data: myRestaurant, isPending, isError } = useQuery({
     queryKey: ["fetchMyRestaurant"],
     queryFn: async (): Promise<Restaurant> => {
       const accessToken = await getAccessTokenSilently();
@@ -32,6 +32,7 @@ export const useGetMyRestaurant = () => {
   return {
     myRestaurant,
     isPending,
+    isError
   };
 };
 
@@ -117,7 +118,7 @@ export const useUpdateMyRestaurant = () => {
   };
 };
 
-export const useGetMyRestaurantOrders = () => {
+export const useGetMyRestaurantOrders = (options?: { enabled?: boolean }) => {
   const { getAccessTokenSilently } = useAuth0();
 
   const { data: restaurantOrders, isPending } = useQuery({
@@ -135,6 +136,7 @@ export const useGetMyRestaurantOrders = () => {
       }
       return response.json();
     },
+    enabled: options?.enabled,
   });
   return {
     restaurantOrders,
