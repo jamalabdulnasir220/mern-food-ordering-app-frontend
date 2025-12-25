@@ -1,4 +1,4 @@
-import { CircleUserRound, LogOut, UserSquare, ClipboardList, UtensilsCrossed } from "lucide-react";
+import { CircleUserRound, LogOut, UserSquare, ClipboardList, UtensilsCrossed, Heart } from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -65,6 +65,17 @@ const UserNameMenu = () => {
             User Profile
           </Link>
         </DropdownMenuItem>
+        {currentUser?.role === "customer" && (
+          <DropdownMenuItem asChild>
+            <Link
+              to={"/favorites"}
+              className="flex items-center gap-2 font-medium text-gray-800 rounded-md px-2 py-2 hover:bg-orange-100 hover:text-orange-600 transition"
+            >
+              <Heart size={18} className="text-orange-500" />
+              My Favorites
+            </Link>
+          </DropdownMenuItem>
+        )}
         <DropdownMenuSeparator />
         <DropdownMenuItem asChild>
           <Button

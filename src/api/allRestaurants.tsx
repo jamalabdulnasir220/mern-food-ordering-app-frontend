@@ -9,7 +9,7 @@ export const useSearchRestaurants = (
   city?: string
 ) => {
   const { data: results, isLoading } = useQuery({
-    queryKey: ["searchRestaurants", searchState],
+    queryKey: ["searchRestaurants", searchState, city],
     queryFn: async (): Promise<RestaurantSearchResponse> => {
       const params = new URLSearchParams();
       params.set("searchQuery", searchState.searchQuery);
@@ -51,6 +51,26 @@ export const useGetRestaurant = (restaurantId?: string) => {
   });
   return {
     restaurant,
+    isLoading,
+  };
+};
+
+export const useGetRestaurantsByIds = (ids?: string[]) => {
+  const { data: restaurants, isPending: isLoading } = useQuery({
+    queryKey: ["getRestaurantsByIds", ids],
+    queryFn: async (): Promise<Restaurant[]> => {
+      const response = await fetch(
+        `${API_BASE_URL}/api/restaurants/by-ids?ids=${ids?.join(",")}`
+      );
+      if (!response.ok) {
+        throw new Error("Unable to get restaurants");
+      }
+      return response.json();
+    },
+    // enabled: !!ids && ids.length > 0,
+  });
+  return {
+    restaurants,
     isLoading,
   };
 };

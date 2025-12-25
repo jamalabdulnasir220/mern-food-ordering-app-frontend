@@ -17,6 +17,7 @@ interface FormDataToUpdate {
   addressLine1: string;
   city: string;
   country: string;
+  favorites?: string[];
 }
 
 export const useCreateMYUser = () => {
@@ -93,6 +94,42 @@ export const useUpdateMyUser = () => {
     error,
     isSuccess,
     reset,
+  };
+};
+
+export const useUpdateFavorites = () => {
+  const { getAccessTokenSilently } = useAuth0();
+  const {
+    mutateAsync: updateFavorites,
+    isPending,
+    error,
+    reset,
+  } = useMutation({
+    mutationFn: async (favorites: string[]) => {
+      const accessToken = await getAccessTokenSilently();
+      const response = await fetch(`${API_BASE_URL}/api/my/user/favorites`, {
+        method: "PUT",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ favorites }),
+      });
+      if (!response.ok) {
+        throw new Error("Failed to update favorites");
+      }
+      return response.json();
+    },
+  });
+
+  if (error) {
+    toast.error("Failed to update favorites");
+    reset();
+  }
+
+  return {
+    updateFavorites,
+    isPending,
   };
 };
 

@@ -11,6 +11,7 @@ import SearchPage from "./pages/SearchPage";
 import DetailPage from "./pages/DetailPage";
 import OrderStatusPage from "./pages/OrderStatusPage";
 import SignupPage from "./pages/SignupPage";
+import FavoritesPage from "./pages/FavoritesPage";
 
 const AppRoutes = () => {
   return (
@@ -62,6 +63,14 @@ const AppRoutes = () => {
           element={
             <Layout>
               <UserProfilePage />
+            </Layout>
+          }
+        />
+        <Route
+          path="/favorites"
+          element={
+            <Layout>
+              <FavoritesPage />
             </Layout>
           }
         />

@@ -8,9 +8,12 @@ import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Card, CardFooter } from "@/components/ui/card";
 import type { UserFormData } from "@/forms/user-profile-form/UserProfileForm";
 import type { MenuItem } from "@/types";
-import { useState } from "react";
-import { useParams } from "react-router-dom";
-import { Loader2, PackageSearch } from "lucide-react";
+import { useState, useEffect } from "react";
+import { useParams, useLocation } from "react-router-dom";
+import { Loader2, PackageSearch, Heart } from "lucide-react";
+import { useGetMyUser, useUpdateFavorites } from "@/api/authRouter";
+import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
 
 export type CartItem = {
   _id: string;
@@ -23,11 +26,62 @@ const DetailPage = () => {
   const { restaurantId } = useParams();
   const { restaurant, isLoading } = useGetRestaurant(restaurantId);
   const { createCheckoutSession, isPending } = useCreateCheckoutSession();
+  const location = useLocation();
+
+  const { currentUser } = useGetMyUser();
+  const { updateFavorites } = useUpdateFavorites();
 
   const [cartItems, setCartItems] = useState<CartItem[]>(() => {
     const storedCartItems = sessionStorage.getItem(`cartItems-${restaurantId}`);
     return storedCartItems ? JSON.parse(storedCartItems) : [];
   });
+
+  const isFavorite = currentUser?.favorites?.includes(restaurantId || "");
+
+  const toggleFavorite = async () => {
+    if (!currentUser || !restaurantId) return;
+
+    const newFavorites = isFavorite
+      ? (currentUser.favorites || []).filter((id) => id !== restaurantId)
+      : [...(currentUser.favorites || []), restaurantId];
+
+    try {
+      await updateFavorites(newFavorites);
+      toast.success(isFavorite ? "Removed from favorites" : "Added to favorites");
+    } catch (error) {
+      toast.error("Failed to update favorites");
+    }
+  };
+
+  useEffect(() => {
+    if (restaurant && location.state?.reorderItems && cartItems.length === 0) {
+      const reorderItems = location.state.reorderItems;
+      const newCartItems: CartItem[] = [];
+
+      reorderItems.forEach((item: any) => {
+        const menuItem = restaurant.menuItems.find(
+          (m) => m._id === item.menuItemId
+        );
+        if (menuItem) {
+          newCartItems.push({
+            _id: menuItem._id,
+            name: menuItem.name,
+            price: menuItem.price,
+            quantity: parseInt(item.quantity),
+          });
+        }
+      });
+
+      if (newCartItems.length > 0) {
+        setCartItems(newCartItems);
+        sessionStorage.setItem(
+          `cartItems-${restaurantId}`,
+          JSON.stringify(newCartItems)
+        );
+        toast.info("Previous order items added to cart with current prices");
+      }
+    }
+  }, [restaurant, location.state, restaurantId]); // Removed cartItems.length dependency to avoid loops, but logic is "if length === 0"
 
   const addToCart = (menuItem: MenuItem) => {
     setCartItems((prevState) => {
@@ -136,6 +190,7 @@ const DetailPage = () => {
 
   return (
     <div className="flex flex-col gap-7 sm:gap-10 px-2 sm:px-6 md:px-0">
+      <div className="relative">
       <AspectRatio ratio={16 / 5}>
         <img
           src={restaurant.imageUrl}
@@ -143,6 +198,19 @@ const DetailPage = () => {
           alt={restaurant.restaurantName + " image"}
         />
       </AspectRatio>
+      <Button
+          onClick={toggleFavorite}
+          variant="secondary"
+          className="absolute top-4 right-4 rounded-full p-2 bg-white/90 hover:bg-white shadow-md z-10"
+        >
+            <Heart
+              className={`h-6 w-6 ${
+                isFavorite ? "fill-red-500 text-red-500" : "text-gray-500"
+              }`}
+            />
+        </Button>
+      </div>
+
       <div className="grid md:grid-cols-[4fr_2fr] gap-4 sm:gap-5 md:px-32">
         <div className="flex flex-col gap-3 sm:gap-4">
           <RestaurantInfo restaurant={restaurant} />

@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import { Button } from "./ui/button";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useGetMyUser } from "@/api/authRouter";
-import { User, UtensilsCrossed, ClipboardList, LogOut } from "lucide-react";
+import { User, UtensilsCrossed, ClipboardList, LogOut, Heart } from "lucide-react";
 
 const navLinkClass =
   "flex gap-3 items-center w-full py-3 px-5 rounded-xl text-base sm:text-lg font-semibold bg-white border border-orange-100 shadow-sm transition-all hover:bg-orange-50 hover:border-orange-200 hover:text-orange-600 group";
@@ -20,6 +20,12 @@ const MobileNavLinks = () => {
         <Link to="/order-status" className={navLinkClass}>
           <ClipboardList className={iconClass} />
           <span>Order Status</span>
+        </Link>
+      )}
+      {currentUser?.role === "customer" && (
+        <Link to="/favorites" className={navLinkClass}>
+          <Heart className={iconClass} />
+          <span>My Favorites</span>
         </Link>
       )}
       {currentUser?.role === "restaurant_manager" && (

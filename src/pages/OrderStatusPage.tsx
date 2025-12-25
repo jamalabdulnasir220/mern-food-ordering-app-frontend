@@ -2,10 +2,13 @@ import { useGetMyOrders } from "@/api/orderRouter";
 import OrderStatusDetail from "@/components/OrderStatusDetail";
 import OrderStatusHeader from "@/components/OrderStatusHeader";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
+import { Button } from "@/components/ui/button";
 import { Loader2, PackageSearch } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const OrderStatusPage = () => {
   const { orders, isPending } = useGetMyOrders();
+  const navigate = useNavigate();
 
   if (isPending) {
     return (
@@ -55,8 +58,18 @@ const OrderStatusPage = () => {
           key={order._id}
           className="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300"
         >
-          <div className="bg-gradient-to-r from-orange-50 to-orange-100/50 px-4 sm:px-6 py-4 border-b border-orange-100">
+          <div className="bg-gradient-to-r from-orange-50 to-orange-100/50 px-4 sm:px-6 py-4 border-b border-orange-100 flex justify-between items-center sm:flex-row flex-col gap-4">
             <OrderStatusHeader order={order} />
+            <Button
+              className="bg-orange-500 hover:bg-orange-600 text-white font-bold sm:w-auto w-full"
+              onClick={() => {
+                navigate(`/detail/${order.restaurant._id}`, {
+                  state: { reorderItems: order.cartItems },
+                });
+              }}
+            >
+              Order Again
+            </Button>
           </div>
           <div className="p-4 sm:p-6">
             <div className="grid gap-6 sm:gap-8 md:grid-cols-2">

@@ -6,6 +6,7 @@ export type User = {
   country: string;
   city: string;
   role: "customer" | "restaurant_manager";
+  favorites?: string[];
 };
 
 export type MenuItem = {
