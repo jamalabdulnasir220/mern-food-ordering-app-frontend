@@ -1,11 +1,12 @@
-import { useGetMyRestaurantOrders } from "@/api/restaurantRouter";
+import { useGetMyRestaurant, useGetMyRestaurantOrders } from "@/api/restaurantRouter";
 import { Link } from "react-router-dom";
 import { UtensilsCrossed, ClipboardList, Timer, TrendingUp } from "lucide-react";
 import { useGetMyUser } from "@/api/authRouter";
 
 const ManagerHomepage = () => {
   const { currentUser } = useGetMyUser();
-  const { restaurantOrders, isPending: isOrdersLoading } = useGetMyRestaurantOrders();
+  const { myRestaurant } = useGetMyRestaurant();
+  const { restaurantOrders, isPending: isOrdersLoading } = useGetMyRestaurantOrders({ enabled: !!myRestaurant });
 
   const activeOrders = restaurantOrders?.filter(o => o.status !== "delivered").length || 0;
   const totalOrders = restaurantOrders?.length || 0;

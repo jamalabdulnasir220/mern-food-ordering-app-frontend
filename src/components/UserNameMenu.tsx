@@ -32,11 +32,11 @@ const UserNameMenu = () => {
           <>
             <DropdownMenuItem asChild>
               <Link
-                to={"/manage-restaurant"}
+                to={"/manager-dashboard"}
                 className="flex items-center gap-2 font-medium text-gray-800 rounded-md px-2 py-2 hover:bg-orange-100 hover:text-orange-600 transition"
               >
                 <UtensilsCrossed size={18} className="text-orange-500" />
-                Manage Restaurant
+                Manager Dashboard
               </Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />

@@ -43,12 +43,12 @@ const formSchema = z
 type RestaurantFormData = z.infer<typeof formSchema>;
 
 type Props = {
-  myRestaurant?: Restaurant;
-  onsave: (restaurantFormData: FormData) => void;
+  restaurant?: Restaurant;
+  onSave: (restaurantFormData: FormData) => void;
   isLoading: boolean;
 };
 
-const ManageRestaurantForm = ({ onsave, isLoading, myRestaurant }: Props) => {
+const ManageRestaurantForm = ({ onSave, isLoading, restaurant }: Props) => {
   const form = useForm<RestaurantFormData>({
     // resolver: zodResolver(formSchema),
     resolver: zodResolver(
@@ -66,27 +66,27 @@ const ManageRestaurantForm = ({ onsave, isLoading, myRestaurant }: Props) => {
   });
 
   useEffect(() => {
-    if (!myRestaurant) {
+    if (!restaurant) {
       return;
     }
     const deliveryPriceFormatted = parseInt(
-      (myRestaurant.deliveryPrice / 100).toFixed(2)
+      (restaurant.deliveryPrice / 100).toFixed(2)
     );
 
-    const menuItemsFormatted = myRestaurant.menuItems.map((item) => ({
+    const menuItemsFormatted = restaurant.menuItems.map((item) => ({
       ...item,
       price: parseInt((item.price / 100).toFixed(2)),
       imageUrl: item.imageUrl,
     }));
 
     const updatedRestaurant = {
-      ...myRestaurant,
+      ...restaurant,
       deliveryPrice: deliveryPriceFormatted,
       menuItems: menuItemsFormatted,
     };
 
     form.reset(updatedRestaurant);
-  }, [myRestaurant, form]);
+  }, [restaurant, form]);
 
   const onSubmit = (formDataJSON: RestaurantFormData) => {
     // TODO: convert formDataJSON to new FormData object
@@ -128,7 +128,7 @@ const ManageRestaurantForm = ({ onsave, isLoading, myRestaurant }: Props) => {
     if (formDataJSON.imageFile) {
       formData.append("imageFile", formDataJSON.imageFile);
     }
-    onsave(formData);
+    onSave(formData);
   };
 
   return (

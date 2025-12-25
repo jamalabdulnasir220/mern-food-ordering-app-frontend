@@ -35,7 +35,7 @@ const AuthCallBackPage = () => {
       // Navigate based on role after a short delay to ensure user is created
       setTimeout(() => {
         if (role === "restaurant_manager") {
-          navigate("/manage-restaurant");
+          navigate("/manager-dashboard");
         } else {
           navigate("/");
         }
