@@ -28,7 +28,7 @@ export const useCreateMYUser = () => {
     isError,
     error,
   } = useMutation({
-    mutationFn: async (newUser: CreateUserRequest) => {
+    mutationFn: async (newUser: CreateUserRequest): Promise<User> => {
       const accessToken = await getAccessTokenSilently();
       const response = await fetch(`${API_BASE_URL}/api/my/user`, {
         method: "POST",
@@ -41,6 +41,7 @@ export const useCreateMYUser = () => {
       if (!response.ok) {
         throw new Error("Failed to create user");
       }
+      return response.json();
     },
   });
   return {

@@ -8,14 +8,23 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { useFormContext } from "react-hook-form";
+import { useMemo } from "react";
 
 const ImageSection = () => {
   const { control, watch } = useFormContext();
 
-  const existingImageUrl = watch("imageUrl");
+  const imageFile = watch("imageFile");
+  const imageUrl = watch("imageUrl");
+
+  const preview = useMemo(() => {
+    if (imageFile instanceof File) {
+      return URL.createObjectURL(imageFile);
+    }
+    return imageUrl;
+  }, [imageFile, imageUrl]);
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-4">
       <div>
         <h2 className="text-xl sm:text-2xl font-bold">Image</h2>
         <FormDescription>
@@ -24,29 +33,29 @@ const ImageSection = () => {
         </FormDescription>
       </div>
 
-      <div className="flex flex-col gap-8 w-full md:w-[50%]">
-        {existingImageUrl && (
-          <AspectRatio ratio={16 / 9}>
+      <div className="flex flex-col gap-8 w-full md:w-[60%] lg:w-[50%]">
+        {preview && (
+          <AspectRatio ratio={16 / 9} className="bg-gray-100 rounded-lg overflow-hidden border border-gray-200 shadow-sm">
             <img
-              src={existingImageUrl}
-              className="h-full w-full rounded-md object-cover"
+              src={preview}
+              alt="Restaurant Preview"
+              className="h-full w-full object-cover transition-opacity duration-300"
             />
           </AspectRatio>
         )}
         <FormField
           control={control}
           name="imageFile"
-          render={({ field }) => (
+          render={({ field: { value, onChange, ...fieldProps } }) => (
             <FormItem>
               <FormControl>
                 <Input
-                  className="bg-white"
+                  {...fieldProps}
+                  className="bg-white border-gray-300 focus:border-orange-500 focus:ring-orange-500 file:bg-orange-50 file:text-orange-700 file:border-0 file:rounded-md file:px-4 file:py-2 file:mr-4 file:hover:bg-orange-100 cursor-pointer"
                   type="file"
                   accept=".jpg, .jpeg, .png"
                   onChange={(event) =>
-                    field.onChange(
-                      event.target.files ? event.target.files[0] : null
-                    )
+                    onChange(event.target.files ? event.target.files[0] : null)
                   }
                 />
               </FormControl>

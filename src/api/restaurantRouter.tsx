@@ -14,7 +14,7 @@ export const useGetMyRestaurant = () => {
   const { getAccessTokenSilently } = useAuth0();
   const { data: myRestaurant, isPending, isError } = useQuery({
     queryKey: ["fetchMyRestaurant"],
-    queryFn: async (): Promise<Restaurant> => {
+    queryFn: async (): Promise<Restaurant | null> => {
       const accessToken = await getAccessTokenSilently();
       const response = await fetch(`${API_BASE_URL}/api/my/restaurant`, {
         method: "GET",
@@ -22,11 +22,19 @@ export const useGetMyRestaurant = () => {
           Authorization: `Bearer ${accessToken}`,
         },
       });
+      
+      // If restaurant doesn't exist (404), return null instead of throwing
+      if (response.status === 404) {
+        return null;
+      }
+      
       if (!response.ok) {
         throw new Error("Failed to get restaurant");
       }
       return response.json();
     },
+    retry: false, // Don't retry on 404
+    staleTime: 1000 * 60 * 5, // Cache for 5 minutes to avoid unnecessary refetches
   });
 
   return {
@@ -38,11 +46,11 @@ export const useGetMyRestaurant = () => {
 
 export const useCreateRestaurant = () => {
   const { getAccessTokenSilently } = useAuth0();
+  const queryClient = useQueryClient();
 
   const {
     mutateAsync: createRestaurant,
     isPending: isLoading,
-    isSuccess,
     error,
   } = useMutation({
     mutationFn: async (restaurantFormData: FormData): Promise<Restaurant> => {
@@ -61,11 +69,12 @@ export const useCreateRestaurant = () => {
 
       return response.json();
     },
+    onSuccess: () => {
+      // Invalidate and refetch restaurant data
+      queryClient.invalidateQueries({ queryKey: ["fetchMyRestaurant"] });
+      toast.success("Restaurant created!");
+    },
   });
-
-  if (isSuccess) {
-    toast.success("Restaurant created!");
-  }
 
   if (error) {
     toast.error("Unable to create restaurant");

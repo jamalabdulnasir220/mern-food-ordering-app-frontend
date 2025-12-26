@@ -19,7 +19,7 @@ export type MenuItem = {
 
 export type Restaurant = {
   _id: string;
-  user: string;
+  user: string | { _id: string; name: string; email: string }; // Can be populated
   restaurantName: string;
   city: string;
   country: string;
@@ -29,6 +29,7 @@ export type Restaurant = {
   menuItems: MenuItem[];
   imageUrl: string;
   lastUpdated: string;
+  approvalStatus?: "pending" | "approved" | "rejected";
 };
 
 export interface RestaurantSearchResponse {

@@ -43,7 +43,7 @@ const formSchema = z
 type RestaurantFormData = z.infer<typeof formSchema>;
 
 type Props = {
-  restaurant?: Restaurant;
+  restaurant?: Restaurant | null;
   onSave: (restaurantFormData: FormData) => void;
   isLoading: boolean;
 };

@@ -68,7 +68,7 @@ const ManagerHomepage = () => {
                   <p className="text-gray-600">Update your restaurant details, menu items, and business hours.</p>
               </div>
               <Link to="/manage-restaurant" className="mt-2 bg-orange-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-orange-700 transition-colors">
-                  Go to Dashboard
+                  Go to Restaurant Management Page
               </Link>
           </div>
 
