@@ -13,33 +13,28 @@ import {
   UtensilsCrossed,
   ClipboardList,
 } from "lucide-react";
-import { useGetMyUser } from "@/api/authRouter";
-import { toast } from "sonner";
-import { useNavigate } from "react-router-dom";
 
 const ManageRestaurantPage = () => {
-  const navigate = useNavigate()
   const { createRestaurant, isLoading: isCreating } = useCreateRestaurant();
   const { updateRestaurant, isLoading: isUpdating } = useUpdateMyRestaurant();
   const { myRestaurant, isPending: isGetRestaurantLoading } = useGetMyRestaurant();
   const { restaurantOrders, isPending: isLoadingOrders } =
     useGetMyRestaurantOrders({ enabled: !!myRestaurant });
-  const { currentUser } = useGetMyUser();
+  // const { currentUser } = useGetMyUser();
 
   const handleCreateRestaurant = (restaurantFormData: FormData) => {
-    if (currentUser?.applicationStatus !== "approved") {
-      toast.error("Your account has not been approved yet. Please contact admin for approval.");
-      return;
-    }
+    // if (currentUser?.applicationStatus !== "approved") {
+    //   toast.error("Your account has not been approved yet. Please contact admin for approval.");
+    //   return;
+    // }
     createRestaurant(restaurantFormData);
-    navigate("/manager-dashboard");
   };
 
   const handleUpdateRestaurant = (restaurantFormData: FormData) => {
-      if (currentUser?.applicationStatus !== "approved") {
-        toast.error("Your account has not been approved yet. Please contact admin for approval.");
-        return;
-      }
+      // if (currentUser?.applicationStatus !== "approved") {
+      //   toast.error("Your account has not been approved yet. Please contact admin for approval.");
+      //   return;
+      // }
       updateRestaurant(restaurantFormData);
   };
 

@@ -12,36 +12,47 @@ const AuthCallBackPage = () => {
   const isUserCreated = useRef(false);
 
   useEffect(() => {
-    if (user?.sub && user?.email && !isUserCreated.current) {
-      // Get role from localStorage (set during signup) or default to customer
-      const signupRole = localStorage.getItem("signup_role") as
-        | "customer"
-        | "restaurant_manager"
-        | null;
-      const role = signupRole || "customer"; // Default to customer if no role specified
+    const createAndNavigate = async () => {
+      if (user?.sub && user?.email && !isUserCreated.current) {
+        // Get role from localStorage (set during signup) or default to customer
+        const signupRole = localStorage.getItem("signup_role") as
+          | "customer"
+          | "restaurant_manager"
+          | null;
+        const role = signupRole || "customer"; // Default to customer if no role specified
 
-      // Clear the stored role after reading it
-      if (signupRole) {
-        localStorage.removeItem("signup_role");
-      }
+        // Clear the stored role after reading it
+        if (signupRole) {
+          localStorage.removeItem("signup_role");
+        }
 
-      createUser({
-        auth0Id: user.sub,
-        email: user.email,
-        role: role,
-      });
-      isUserCreated.current = true;
+        try {
+          const result = await createUser({
+            auth0Id: user.sub,
+            email: user.email,
+            role: role,
+          });
+          
+          isUserCreated.current = true;
 
-      // Navigate based on role after a short delay to ensure user is created
-      setTimeout(() => {
-        if (role === "restaurant_manager") {
-          navigate("/manager-dashboard");
-        } else {
+          // Navigate based on the actual role returned from backend
+          if (result && result.role === "restaurant_manager") {
+            navigate("/manager-dashboard");
+          } else if (result && result.role === "admin") {
+            navigate("/admin");
+          } else {
+            navigate("/");
+          }
+        } catch (error) {
+          console.error("Auth callback error:", error);
           navigate("/");
         }
-      }, 500);
-    }
+      }
+    };
+
+    createAndNavigate();
   }, [user, createUser, navigate]);
+
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50">

@@ -1,6 +1,6 @@
 import { useAuth0 } from "@auth0/auth0-react";
 import { useMutation, useQuery } from "@tanstack/react-query";
-import type { User } from "../types";
+import type { User, Restaurant } from "../types";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -61,4 +61,63 @@ export const useUpdateApplicationStatus = () => {
     });
 
     return { updateStatus, isLoading, isSuccess, error, reset };
+};
+
+export const useGetAllRestaurants = () => {
+    const { getAccessTokenSilently } = useAuth0();
+
+    const getAllRestaurantsRequest = async (): Promise<Restaurant[]> => {
+        const accessToken = await getAccessTokenSilently();
+
+        const response = await fetch(`${API_BASE_URL}/api/admin/restaurants`, {
+            method: "GET",
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+            },
+        });
+
+        if (!response.ok) {
+            throw new Error("Failed to fetch restaurants");
+        }
+
+        return response.json();
+    };
+
+    const { data: restaurants, isLoading, error } = useQuery({
+        queryKey: ["fetchAllRestaurants"],
+        queryFn: getAllRestaurantsRequest,
+    });
+
+    return { restaurants, isLoading, error };
+};
+
+type UpdateRestaurantApprovalRequest = {
+    restaurantId: string;
+    status: "approved" | "rejected";
+};
+
+export const useUpdateRestaurantApprovalStatus = () => {
+    const { getAccessTokenSilently } = useAuth0();
+
+    const updateApprovalStatusRequest = async (formData: UpdateRestaurantApprovalRequest) => {
+        const accessToken = await getAccessTokenSilently();
+        const response = await fetch(`${API_BASE_URL}/api/admin/restaurants/${formData.restaurantId}/approval-status`, {
+            method: "PUT",
+            headers: {
+                Authorization: `Bearer ${accessToken}`,
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({ status: formData.status }),
+        });
+
+        if (!response.ok) {
+            throw new Error("Failed to update restaurant approval status");
+        }
+    };
+
+    const { mutateAsync: updateApprovalStatus, isPending: isLoading, isSuccess, error, reset } = useMutation({
+        mutationFn: updateApprovalStatusRequest,
+    });
+
+    return { updateApprovalStatus, isLoading, isSuccess, error, reset };
 };
