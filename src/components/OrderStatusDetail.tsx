@@ -6,7 +6,8 @@ import {
   ShoppingBag,
   DollarSign,
   CheckCircle2,
-  Calendar,
+  Loader2,
+  Clock,
 } from "lucide-react";
 import { Badge } from "./ui/badge";
 
@@ -27,6 +28,34 @@ const formatDate = (dateString: string) => {
 };
 
 const OrderStatusDetail = ({ order }: Props) => {
+  const getDisplayAmount = () => {
+    if (
+      order.totalAmount !== undefined &&
+      order.totalAmount !== null &&
+      !isNaN(order.totalAmount)
+    ) {
+      return formatMoney(order.totalAmount);
+    }
+
+    // Fallback calculation if totalAmount is not yet set
+    try {
+      const total = order.cartItems.reduce((acc, item) => {
+        const menuItem = order.restaurant.menuItems.find(
+          (m) => m._id === item.menuItemId
+        );
+        return acc + (menuItem ? menuItem.price * parseInt(item.quantity) : 0);
+      }, 0);
+
+      const finalTotal = total + order.restaurant.deliveryPrice;
+      if (isNaN(finalTotal)) return null;
+      return formatMoney(finalTotal);
+    } catch (e) {
+      return null;
+    }
+  };
+
+  const displayAmount = getDisplayAmount();
+
   return (
     <div className="space-y-4 sm:space-y-5">
       {/* Delivery Address Card */}
@@ -83,7 +112,7 @@ const OrderStatusDetail = ({ order }: Props) => {
 
       {/* Order Date */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-3 sm:p-4 flex items-center gap-3">
-        <Calendar className="text-gray-400 flex-shrink-0" size={18} />
+        <Clock className="text-gray-400 flex-shrink-0" size={18} />
         <div>
           <span className="text-xs sm:text-sm text-gray-500 font-medium">
             Order placed on
@@ -108,7 +137,11 @@ const OrderStatusDetail = ({ order }: Props) => {
                 Total Amount
               </span>
               <span className="text-2xl sm:text-3xl font-extrabold text-green-700">
-                {formatMoney(order.totalAmount)}
+                {displayAmount ? (
+                  displayAmount
+                ) : (
+                  <Loader2 className="animate-spin h-6 w-6 sm:h-8 sm:w-8 text-green-500" />
+                )}
               </span>
             </div>
           </div>
