@@ -1,13 +1,14 @@
 import { useCreateMYUser } from "@/api/authRouter";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useEffect, useRef } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const AuthCallBackPage = () => {
   const navigate = useNavigate();
 
   const { user } = useAuth0();
   const { createUser } = useCreateMYUser();
+  const location = useLocation();
 
   const isUserCreated = useRef(false);
 
@@ -32,11 +33,14 @@ const AuthCallBackPage = () => {
             email: user.email,
             role: role,
           });
-          
+
           isUserCreated.current = true;
 
-          // Navigate based on the actual role returned from backend
-          if (result && result.role === "restaurant_manager") {
+          const returnTo = location.state?.returnTo;
+
+          if (returnTo) {
+            navigate(returnTo);
+          } else if (result && result.role === "restaurant_manager") {
             navigate("/manager-dashboard");
           } else if (result && result.role === "admin") {
             navigate("/admin");
