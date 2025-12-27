@@ -33,6 +33,9 @@ const CheckoutButton = ({
       appState: {
         returnTo: pathname,
       },
+      authorizationParams: {
+        screen_hint: "signup",
+      },
     });
   };
 
@@ -60,7 +63,7 @@ const CheckoutButton = ({
         onClick={onLogin}
         className="bg-orange-500 flex-1 font-semibold px-2 py-2 text-sm sm:text-base"
       >
-        <span className="text-xs sm:text-base">Login to checkout</span>
+        <span className="text-xs sm:text-base">Sign up or Log in to checkout</span>
       </Button>
     );
   }
