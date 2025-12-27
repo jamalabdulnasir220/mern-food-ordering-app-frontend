@@ -58,7 +58,7 @@ const OrderStatusPage = () => {
           key={order._id}
           className="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300"
         >
-          <div className="bg-gradient-to-r from-orange-50 to-orange-100/50 px-4 sm:px-6 py-4 border-b border-orange-100 flex justify-between items-center sm:flex-row flex-col gap-4">
+          <div className="bg-linear-to-r from-orange-50 to-orange-100/50 px-4 sm:px-6 py-4 border-b border-orange-100 flex justify-between items-center sm:flex-row flex-col gap-4">
             <OrderStatusHeader order={order} />
             <Button
               className="bg-orange-500 hover:bg-orange-600 text-white font-bold sm:w-auto w-full"
@@ -81,7 +81,7 @@ const OrderStatusPage = () => {
                     className="absolute inset-0 w-full h-full object-cover"
                     alt={order.restaurant.restaurantName + " image"}
                   />
-                  <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent px-3 py-2 sm:px-4 sm:py-2.5 flex items-end">
+                  <div className="absolute bottom-0 left-0 right-0 bg-linear-to-t from-black/80 to-transparent px-3 py-2 sm:px-4 sm:py-2.5 flex items-end">
                     <p className="text-white font-bold text-sm sm:text-base m-0 leading-tight">
                       {order.restaurant.restaurantName}
                     </p>

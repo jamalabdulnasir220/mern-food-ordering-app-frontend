@@ -7,7 +7,7 @@ import RestaurantInfo from "@/components/RestaurantInfo";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Card, CardFooter } from "@/components/ui/card";
 import type { UserFormData } from "@/forms/user-profile-form/UserProfileForm";
-import type { MenuItem } from "@/types";
+import type { MenuItem,  OrderCartItem } from "@/types";
 import { useState, useEffect } from "react";
 import { useParams, useLocation } from "react-router-dom";
 import { Loader2, PackageSearch, Heart } from "lucide-react";
@@ -49,16 +49,18 @@ const DetailPage = () => {
       await updateFavorites(newFavorites);
       toast.success(isFavorite ? "Removed from favorites" : "Added to favorites");
     } catch (error) {
+      console.log(error)
       toast.error("Failed to update favorites");
     }
   };
+
 
   useEffect(() => {
     if (restaurant && location.state?.reorderItems && cartItems.length === 0) {
       const reorderItems = location.state.reorderItems;
       const newCartItems: CartItem[] = [];
 
-      reorderItems.forEach((item: any) => {
+      reorderItems.forEach((item: OrderCartItem) => {
         const menuItem = restaurant.menuItems.find(
           (m) => m._id === item.menuItemId
         );
@@ -81,7 +83,7 @@ const DetailPage = () => {
         toast.info("Previous order items added to cart with current prices");
       }
     }
-  }, [restaurant, location.state, restaurantId]); // Removed cartItems.length dependency to avoid loops, but logic is "if length === 0"
+  }, [restaurant, location.state, restaurantId, cartItems.length]);
 
   const addToCart = (menuItem: MenuItem) => {
     setCartItems((prevState) => {

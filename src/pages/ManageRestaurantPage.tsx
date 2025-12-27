@@ -14,7 +14,9 @@ import {
   ClipboardList,
 } from "lucide-react";
 
+
 const ManageRestaurantPage = () => {
+
   const { createRestaurant, isLoading: isCreating } = useCreateRestaurant();
   const { updateRestaurant, isLoading: isUpdating } = useUpdateMyRestaurant();
   const { myRestaurant, isPending: isGetRestaurantLoading } = useGetMyRestaurant();
@@ -28,14 +30,17 @@ const ManageRestaurantPage = () => {
     //   return;
     // }
     createRestaurant(restaurantFormData);
+
+
   };
 
   const handleUpdateRestaurant = (restaurantFormData: FormData) => {
-      // if (currentUser?.applicationStatus !== "approved") {
-      //   toast.error("Your account has not been approved yet. Please contact admin for approval.");
-      //   return;
-      // }
-      updateRestaurant(restaurantFormData);
+    // if (currentUser?.applicationStatus !== "approved") {
+    //   toast.error("Your account has not been approved yet. Please contact admin for approval.");
+    //   return;
+    // }
+    updateRestaurant(restaurantFormData)
+
   };
 
   const isEditing = !!myRestaurant;
@@ -88,7 +93,7 @@ const ManageRestaurantPage = () => {
               </div>
             </div>
           ) : !myRestaurant ? (
-             <div className="flex flex-col items-center justify-center min-h-[40vh] bg-gray-50 rounded-xl p-8">
+            <div className="flex flex-col items-center justify-center min-h-[40vh] bg-gray-50 rounded-xl p-8">
               <UtensilsCrossed className="h-16 w-16 sm:h-20 sm:w-20 text-gray-300 mb-4" />
               <div className="text-xl sm:text-2xl font-bold text-gray-700 mb-2">
                 No Restaurant Found

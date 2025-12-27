@@ -48,6 +48,12 @@ export type OrderStatus =
   | "outForDelivery"
   | "delivered";
 
+export type OrderCartItem = {
+  menuItemId: string;
+  name: string;
+  quantity: string;
+}
+
 export type Order = {
   _id: string;
   restaurant: Restaurant;
