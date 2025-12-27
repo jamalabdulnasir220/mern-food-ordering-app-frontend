@@ -38,7 +38,7 @@ const AuthCallBackPage = () => {
 
           const returnTo = location.state?.returnTo;
 
-          if (returnTo) {
+          if (returnTo && returnTo !== "/auth-callback") {
             navigate(returnTo);
           } else if (result && result.role === "restaurant_manager") {
             navigate("/manager-dashboard");
