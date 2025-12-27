@@ -35,7 +35,7 @@ const RestaurantInfo = ({ restaurant }: Props) => {
         </span>
         <span className="flex items-center gap-1 sm:gap-2 text-xs sm:text-[15px] text-gray-500 font-medium before:content-['·'] before:mx-2 before:text-gray-300">
           Delivery Fee: 
-          <span className="text-orange-700 font-semibold">${restaurant.deliveryPrice.toFixed(2)}</span>
+          <span className="text-orange-700 font-semibold">GHC{(restaurant.deliveryPrice / 100).toFixed(2)}</span>
         </span>
         <span className="flex items-center gap-1 sm:gap-2 flex-wrap ml-0 sm:ml-2 w-full sm:w-auto">
           {restaurant.cuisines.map((cuisine, index) => (
