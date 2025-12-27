@@ -27,9 +27,7 @@ const SignupPage = () => {
     localStorage.setItem("signup_role", selectedRole);
 
     await loginWithRedirect({
-      appState: {
-        returnTo: "/auth-callback",
-      },
+      appState: {},
       authorizationParams: {
         screen_hint: "signup",
       },
@@ -56,11 +54,10 @@ const SignupPage = () => {
             {/* Customer Card */}
             <button
               onClick={() => setSelectedRole("customer")}
-              className={`p-6 border-2 rounded-lg text-left transition-all hover:shadow-lg ${
-                selectedRole === "customer"
+              className={`p-6 border-2 rounded-lg text-left transition-all hover:shadow-lg ${selectedRole === "customer"
                   ? "border-orange-500 bg-orange-50"
                   : "border-gray-200 hover:border-orange-300"
-              }`}
+                }`}
             >
               <div className="flex items-center gap-3 mb-3">
                 <ShoppingCart className="text-orange-500" size={32} />
@@ -75,11 +72,10 @@ const SignupPage = () => {
             {/* Restaurant Manager Card */}
             <button
               onClick={() => setSelectedRole("restaurant_manager")}
-              className={`p-6 border-2 rounded-lg text-left transition-all hover:shadow-lg ${
-                selectedRole === "restaurant_manager"
+              className={`p-6 border-2 rounded-lg text-left transition-all hover:shadow-lg ${selectedRole === "restaurant_manager"
                   ? "border-orange-500 bg-orange-50"
                   : "border-gray-200 hover:border-orange-300"
-              }`}
+                }`}
             >
               <div className="flex items-center gap-3 mb-3">
                 <UtensilsCrossed className="text-orange-500" size={32} />
