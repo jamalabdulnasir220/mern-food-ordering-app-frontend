@@ -16,23 +16,24 @@ const AuthCallBackPage = () => {
     const createAndNavigate = async () => {
       if (user?.sub && user?.email && !isUserCreated.current) {
         // Get role from localStorage (set during signup) or default to customer
-        const signupRole = localStorage.getItem("signup_role") as
-          | "customer"
-          | "restaurant_manager"
-          | null;
-        const role = signupRole || "customer"; // Default to customer if no role specified
+        const raw = localStorage.getItem("signup_role")
+        // const role = signupRole || "customer"; // Default to customer if no role specified
+        const signupRole =
+          raw === "restaurant_manager" || raw === "customer" ? raw : null;
+        const role = signupRole ?? "customer";
 
-        // Clear the stored role after reading it
-        if (signupRole) {
-          localStorage.removeItem("signup_role");
-        }
+
 
         try {
           const result = await createUser({
             auth0Id: user.sub,
             email: user.email,
-            role: role,
+            role
           });
+
+        if (signupRole) {
+          localStorage.removeItem("signup_role");
+        }
 
           isUserCreated.current = true;
 
@@ -55,7 +56,7 @@ const AuthCallBackPage = () => {
     };
 
     createAndNavigate();
-  }, [user, createUser, navigate]);
+  }, [user, createUser, navigate, location]);
 
 
   return (
