@@ -6,14 +6,25 @@ import OrderSummary from "@/components/OrderSummary";
 import RestaurantInfo from "@/components/RestaurantInfo";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Card, CardFooter } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { UserFormData } from "@/forms/user-profile-form/UserProfileForm";
-import type { MenuItem,  OrderCartItem } from "@/types";
+import type { MenuItem, OrderCartItem } from "@/types";
 import { useState, useEffect } from "react";
 import { useParams, useLocation } from "react-router-dom";
-import { Loader2, PackageSearch, Heart } from "lucide-react";
+import {
+  Loader2,
+  PackageSearch,
+  Heart,
+  UtensilsCrossed,
+  MessageSquare,
+} from "lucide-react";
 import { useGetMyUser, useUpdateFavorites } from "@/api/authRouter";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import ReviewForm from "@/components/ReviewForm";
+import ReviewsList from "@/components/ReviewsList";
+import { useGetUserReview } from "@/api/reviewApi";
+import { useAuth0 } from "@auth0/auth0-react";
 
 export type CartItem = {
   _id: string;
@@ -30,6 +41,8 @@ const DetailPage = () => {
 
   const { currentUser } = useGetMyUser();
   const { updateFavorites } = useUpdateFavorites();
+  const { isAuthenticated } = useAuth0();
+  const { review: userReview } = useGetUserReview(restaurantId);
 
   const [cartItems, setCartItems] = useState<CartItem[]>(() => {
     const storedCartItems = sessionStorage.getItem(`cartItems-${restaurantId}`);
@@ -47,13 +60,14 @@ const DetailPage = () => {
 
     try {
       await updateFavorites(newFavorites);
-      toast.success(isFavorite ? "Removed from favorites" : "Added to favorites");
+      toast.success(
+        isFavorite ? "Removed from favorites" : "Added to favorites"
+      );
     } catch (error) {
-      console.log(error)
+      console.log(error);
       toast.error("Failed to update favorites");
     }
   };
-
 
   useEffect(() => {
     if (restaurant && location.state?.reorderItems && cartItems.length === 0) {
@@ -177,7 +191,8 @@ const DetailPage = () => {
           Restaurant not found
         </div>
         <div className="text-gray-500 text-sm sm:text-base mb-3 sm:mb-4 text-center">
-          We couldn't find the restaurant you're looking for.<br />
+          We couldn't find the restaurant you're looking for.
+          <br />
           Please try another restaurant or return to the main page.
         </div>
         <a
@@ -193,43 +208,86 @@ const DetailPage = () => {
   return (
     <div className="flex flex-col gap-7 sm:gap-10 px-2 sm:px-6 md:px-0">
       <div className="relative">
-      <AspectRatio ratio={16 / 5}>
-        <img
-          src={restaurant.imageUrl}
-          className="w-full h-full object-cover rounded-md"
-          alt={restaurant.restaurantName + " image"}
-        />
-      </AspectRatio>
-      <Button
+        <AspectRatio ratio={16 / 5}>
+          <img
+            src={restaurant.imageUrl}
+            className="w-full h-full object-cover rounded-md"
+            alt={restaurant.restaurantName + " image"}
+          />
+        </AspectRatio>
+        <Button
           onClick={toggleFavorite}
           variant="secondary"
           className="absolute top-4 right-4 rounded-full p-2 bg-white/90 hover:bg-white shadow-md z-10"
         >
-            <Heart
-              className={`h-6 w-6 ${
-                isFavorite ? "fill-red-500 text-red-500" : "text-gray-500"
-              }`}
-            />
+          <Heart
+            className={`h-6 w-6 ${
+              isFavorite ? "fill-red-500 text-red-500" : "text-gray-500"
+            }`}
+          />
         </Button>
       </div>
 
       <div className="grid md:grid-cols-[4fr_2fr] gap-4 sm:gap-5 md:px-32">
         <div className="flex flex-col gap-3 sm:gap-4">
           <RestaurantInfo restaurant={restaurant} />
-          <span className="text-lg sm:text-2xl font-bold tracking-tight">Menu</span>
-          {restaurant.menuItems.length === 0 ? (
-            <div className="text-gray-500 text-base sm:text-lg mt-2">
-              No menu items available for this restaurant.
-            </div>
-          ) : (
-            restaurant.menuItems.map((menuItem) => (
-              <MenuItemComponent
-                key={menuItem._id}
-                menuItem={menuItem}
-                addToCart={() => addToCart(menuItem)}
-              />
-            ))
-          )}
+
+          <Tabs defaultValue="menu" className="w-full">
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="menu" className="flex items-center gap-2">
+                <UtensilsCrossed className="w-4 h-4" />
+                Menu
+              </TabsTrigger>
+              <TabsTrigger value="reviews" className="flex items-center gap-2">
+                <MessageSquare className="w-4 h-4" />
+                Reviews
+                {restaurant.totalReviews && (
+                  <span className="text-xs">({restaurant.totalReviews})</span>
+                )}
+              </TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="menu" className="mt-4">
+              {restaurant.menuItems.length === 0 ? (
+                <div className="text-gray-500 text-base sm:text-lg mt-2">
+                  No menu items available for this restaurant.
+                </div>
+              ) : (
+                restaurant.menuItems.map((menuItem) => (
+                  <MenuItemComponent
+                    key={menuItem._id}
+                    menuItem={menuItem}
+                    addToCart={() => addToCart(menuItem)}
+                  />
+                ))
+              )}
+            </TabsContent>
+
+            <TabsContent value="reviews" className="mt-4 space-y-6">
+              {isAuthenticated && (
+                <Card className="p-4 sm:p-6">
+                  <h3 className="text-lg font-bold mb-4">
+                    {userReview ? "Update Your Review" : "Write a Review"}
+                  </h3>
+                  <ReviewForm
+                    restaurantId={restaurant._id}
+                    existingReview={userReview}
+                  />
+                </Card>
+              )}
+              {!isAuthenticated && (
+                <Card className="p-4 sm:p-6 bg-orange-50 border-orange-200">
+                  <p className="text-sm text-gray-600">
+                    Please sign in to write a review.
+                  </p>
+                </Card>
+              )}
+              <div>
+                <h3 className="text-lg font-bold mb-4">Customer Reviews</h3>
+                <ReviewsList restaurantId={restaurant._id} />
+              </div>
+            </TabsContent>
+          </Tabs>
         </div>
         {/* Checkout div */}
         <div className="mt-6 md:mt-0">

@@ -7,6 +7,7 @@ import {
   CardTitle,
 } from "./ui/card";
 import { Dot, MapPin, Timer, BadgePercent } from "lucide-react";
+import { StarRating } from "./StarRating";
 
 type Props = {
   restaurant: Restaurant;
@@ -22,20 +23,43 @@ const RestaurantInfo = ({ restaurant }: Props) => {
           </CardTitle>
           <BadgePercent className="text-orange-400 h-5 w-5 sm:h-6 sm:w-6" />
         </div>
-        <CardDescription className="flex items-center gap-1 sm:gap-2 text-sm sm:text-base text-gray-600">
-          <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-orange-500 inline-block" />
-          <span>{restaurant.city}, {restaurant.country}</span>
+        <CardDescription className="flex flex-col gap-2 text-sm sm:text-base text-gray-600">
+          <div className="flex items-center gap-1 sm:gap-2">
+            <MapPin className="w-4 h-4 sm:w-5 sm:h-5 text-orange-500 inline-block" />
+            <span>
+              {restaurant.city}, {restaurant.country}
+            </span>
+          </div>
+          {restaurant.averageRating && (
+            <div className="flex items-center gap-2">
+              <StarRating
+                rating={restaurant.averageRating}
+                size="sm"
+                showNumber
+              />
+              {restaurant.totalReviews && (
+                <span className="text-xs text-gray-500">
+                  ({restaurant.totalReviews}{" "}
+                  {restaurant.totalReviews === 1 ? "review" : "reviews"})
+                </span>
+              )}
+            </div>
+          )}
         </CardDescription>
       </CardHeader>
       <CardContent className="flex flex-wrap items-center gap-2 sm:gap-3 py-1 px-1 sm:py-2 sm:px-2">
         <span className="flex items-center gap-1 sm:gap-2 text-xs sm:text-[15px] text-gray-500 font-medium">
           <Timer className="h-4 w-4 text-orange-400 mr-1" />
-          Est. Delivery: 
-          <span className="text-orange-700 font-semibold">{restaurant.estimatedDeliveryTime} mins</span>
+          Est. Delivery:
+          <span className="text-orange-700 font-semibold">
+            {restaurant.estimatedDeliveryTime} mins
+          </span>
         </span>
         <span className="flex items-center gap-1 sm:gap-2 text-xs sm:text-[15px] text-gray-500 font-medium before:content-['·'] before:mx-2 before:text-gray-300">
-          Delivery Fee: 
-          <span className="text-orange-700 font-semibold">GHC{(restaurant.deliveryPrice / 100).toFixed(2)}</span>
+          Delivery Fee:
+          <span className="text-orange-700 font-semibold">
+            GHC{(restaurant.deliveryPrice / 100).toFixed(2)}
+          </span>
         </span>
         <span className="flex items-center gap-1 sm:gap-2 flex-wrap ml-0 sm:ml-2 w-full sm:w-auto">
           {restaurant.cuisines.map((cuisine, index) => (

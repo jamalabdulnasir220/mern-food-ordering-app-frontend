@@ -30,6 +30,21 @@ export type Restaurant = {
   imageUrl: string;
   lastUpdated: string;
   approvalStatus?: "pending" | "approved" | "rejected";
+  averageRating?: number;
+  totalReviews?: number;
+};
+
+export type Review = {
+  _id: string;
+  restaurant: string;
+  user: {
+    _id: string;
+    name: string;
+    email: string;
+  };
+  rating: number;
+  comment: string;
+  createdAt: string;
 };
 
 export interface RestaurantSearchResponse {
@@ -52,7 +67,7 @@ export type OrderCartItem = {
   menuItemId: string;
   name: string;
   quantity: string;
-}
+};
 
 export type Order = {
   _id: string;
