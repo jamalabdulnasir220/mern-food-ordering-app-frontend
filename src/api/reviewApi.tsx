@@ -165,7 +165,7 @@ export const useUpdateReview = () => {
 
       return response.json();
     },
-    onSuccess: (review) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ["restaurantReviews"],
       });
