@@ -17,6 +17,10 @@ const SORT_OPTIONS = [
     value: "bestMatch",
   },
   {
+    name: "Highest Rated",
+    value: "averageRating",
+  },
+  {
     name: "Delivery Price",
     value: "deliveryPrice",
   },
