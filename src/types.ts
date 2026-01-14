@@ -5,9 +5,14 @@ export type User = {
   addressLine1: string;
   country: string;
   city: string;
+  phoneNumber?: string;
   role: "customer" | "restaurant_manager" | "admin";
   applicationStatus?: "pending" | "approved" | "rejected";
   favorites?: string[];
+  notificationPreferences?: {
+    email?: boolean;
+    sms?: boolean;
+  };
 };
 
 export type MenuItem = {
@@ -83,6 +88,7 @@ export type Order = {
     name: string;
     addressLine1: string;
     city: string;
+    phoneNumber?: string;
   };
   totalAmount: number;
   status: OrderStatus;
