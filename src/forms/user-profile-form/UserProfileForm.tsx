@@ -22,6 +22,7 @@ const formSchema = z.object({
   addressLine1: z.string().min(1, "Address Line 1 is required"),
   city: z.string().min(1, "City is required"),
   country: z.string().min(1, "Country is required"),
+  phoneNumber: z.string().optional(),
 });
 
 export type UserFormData = z.infer<typeof formSchema>;
@@ -69,7 +70,11 @@ const UserProfileForm = ({
             <FormItem>
               <FormLabel className="text-sm md:text-base">Email</FormLabel>
               <FormControl>
-                <Input {...field} disabled className="bg-white text-sm md:text-base" />
+                <Input
+                  {...field}
+                  disabled
+                  className="bg-white text-sm md:text-base"
+                />
               </FormControl>
             </FormItem>
           )}
@@ -95,7 +100,9 @@ const UserProfileForm = ({
             name="addressLine1"
             render={({ field }) => (
               <FormItem className="flex-1">
-                <FormLabel className="text-sm md:text-base">Address Line 1</FormLabel>
+                <FormLabel className="text-sm md:text-base">
+                  Address Line 1
+                </FormLabel>
                 <FormControl>
                   <Input {...field} className="bg-white text-sm md:text-base" />
                 </FormControl>
@@ -130,10 +137,37 @@ const UserProfileForm = ({
             )}
           />
         </div>
+        <FormField
+          control={form.control}
+          name="phoneNumber"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel className="text-sm md:text-base">
+                Phone Number (for SMS notifications)
+              </FormLabel>
+              <FormControl>
+                <Input
+                  {...field}
+                  type="tel"
+                  placeholder="+1234567890"
+                  className="bg-white text-sm md:text-base"
+                />
+              </FormControl>
+              <FormDescription className="text-xs md:text-sm">
+                Add your phone number to receive SMS notifications about your
+                orders
+              </FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
         {isLoading ? (
           <ButtonLoading />
         ) : (
-          <Button type="submit" className="bg-orange-500 text-sm md:text-base px-6 py-2">
+          <Button
+            type="submit"
+            className="bg-orange-500 text-sm md:text-base px-6 py-2"
+          >
             {buttonText}
           </Button>
         )}

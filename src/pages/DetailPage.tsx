@@ -163,6 +163,7 @@ const DetailPage = () => {
         name: userFormData.name,
         addressLine1: userFormData.addressLine1,
         city: userFormData.city,
+        phoneNumber: userFormData.phoneNumber,
       },
     };
 
