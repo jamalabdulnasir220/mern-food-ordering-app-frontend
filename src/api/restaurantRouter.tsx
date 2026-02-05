@@ -12,7 +12,11 @@ type UpdateOrderStatusRequest = {
 
 export const useGetMyRestaurant = () => {
   const { getAccessTokenSilently } = useAuth0();
-  const { data: myRestaurant, isPending, isError } = useQuery({
+  const {
+    data: myRestaurant,
+    isPending,
+    isError,
+  } = useQuery({
     queryKey: ["fetchMyRestaurant"],
     queryFn: async (): Promise<Restaurant | null> => {
       const accessToken = await getAccessTokenSilently();
@@ -22,12 +26,12 @@ export const useGetMyRestaurant = () => {
           Authorization: `Bearer ${accessToken}`,
         },
       });
-      
+
       // If restaurant doesn't exist (404), return null instead of throwing
       if (response.status === 404) {
         return null;
       }
-      
+
       if (!response.ok) {
         throw new Error("Failed to get restaurant");
       }
@@ -40,7 +44,7 @@ export const useGetMyRestaurant = () => {
   return {
     myRestaurant,
     isPending,
-    isError
+    isError,
   };
 };
 
@@ -64,7 +68,21 @@ export const useCreateRestaurant = () => {
       });
 
       if (!response.ok) {
-        throw new Error("Failed to create a new restaurant");
+        let errorMessage = "Failed to create a new restaurant";
+
+        try {
+          const data = await response.json();
+          if (data?.message === "FILE_TOO_LARGE") {
+            // Special marker so we can show a specific toast
+            errorMessage = "FILE_TOO_LARGE";
+          } else if (typeof data?.message === "string") {
+            errorMessage = data.message;
+          }
+        } catch {
+          // Ignore JSON parse errors and fall back to generic message
+        }
+
+        throw new Error(errorMessage);
       }
 
       return response.json();
@@ -77,7 +95,14 @@ export const useCreateRestaurant = () => {
   });
 
   if (error) {
-    toast.error("Unable to create restaurant");
+    const message = (error as Error).message;
+    if (message === "FILE_TOO_LARGE") {
+      toast.error(
+        "Each image must be 5MB or less. Please choose smaller images."
+      );
+    } else {
+      toast.error("Unable to create restaurant");
+    }
   }
 
   return {
