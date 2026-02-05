@@ -24,13 +24,13 @@ const OrderSummary = ({ restaurant, cartItems, removeFromCart }: Props) => {
 
   return (
     <>
-      <CardHeader className="bg-gradient-to-r from-orange-50 to-white rounded-t-lg pb-2 px-2 sm:pb-3">
+      <CardHeader className="rounded-t-lg pb-2 px-2 sm:pb-3">
         <CardTitle className="flex items-center justify-between text-lg sm:text-2xl font-bold tracking-tight text-orange-700">
           <span className="flex items-center gap-1 sm:gap-2">
             <ShoppingCart className="text-orange-400" size={24} />
             <span className="text-base sm:text-xl">Your Order</span>
           </span>
-          <span className="bg-orange-100 rounded-xl px-3 sm:px-4 py-1 sm:py-2 text-base sm:text-xl">
+          <span className=" rounded-xl px-3 sm:px-4 py-1 sm:py-2 text-base sm:text-xl">
             {formatMoney(getTotalCost())}
           </span>
         </CardTitle>
@@ -64,7 +64,7 @@ const OrderSummary = ({ restaurant, cartItems, removeFromCart }: Props) => {
             {cartItems.map((item) => (
               <div
                 key={item._id}
-                className="flex justify-between items-center bg-orange-50 rounded-lg px-2 py-1.5 sm:px-3 sm:py-2 shadow group transition hover:bg-orange-100"
+                className="flex justify-between items-center  rounded-lg px-2 py-1.5 sm:px-3 sm:py-2 shadow group transition hover:bg-orange-100"
               >
                 <span className="flex items-center gap-2 sm:gap-3">
                   <Badge
@@ -113,7 +113,7 @@ const OrderSummary = ({ restaurant, cartItems, removeFromCart }: Props) => {
             <Separator className="my-1" />
             <div className="flex justify-between items-center px-1 mt-2">
               <span className="text-base sm:text-lg font-bold text-orange-700">Total</span>
-              <span className="bg-orange-100 rounded-lg px-3 sm:px-4 py-1.5 sm:py-2 text-base sm:text-[19px] font-bold text-orange-800 shadow">
+              <span className=" rounded-lg px-3 sm:px-4 py-1.5 sm:py-2 text-base sm:text-[19px] font-bold text-orange-800 shadow">
                 {formatMoney(getTotalCost())}
               </span>
             </div>

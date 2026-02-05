@@ -37,6 +37,10 @@ export type Restaurant = {
   approvalStatus?: "pending" | "approved" | "rejected";
   averageRating?: number;
   totalReviews?: number;
+  openingTime?: string; 
+  closingTime?: string; 
+  daysOpen?: string[]; 
+  isTemporarilyClosed?: boolean;
 };
 
 export type Review = {

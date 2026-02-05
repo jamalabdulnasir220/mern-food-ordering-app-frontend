@@ -146,6 +146,37 @@ const DetailPage = () => {
     });
   };
 
+  const computeIsRestaurantOpen = () => {
+    if (!restaurant) return true;
+
+    if (restaurant.isTemporarilyClosed) {
+      return false;
+    }
+
+    if (!restaurant.openingTime || !restaurant.closingTime) {
+      return true;
+    }
+
+    const now = new Date();
+    const dayIndex = now.getDay(); 
+    const dayCodes = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+    const todayCode = dayCodes[dayIndex];
+
+    if (restaurant.daysOpen && restaurant.daysOpen.length > 0) {
+      if (!restaurant.daysOpen.includes(todayCode)) {
+        return false;
+      }
+    }
+
+    const [openH, openM] = restaurant.openingTime.split(":").map(Number);
+    const [closeH, closeM] = restaurant.closingTime.split(":").map(Number);
+    const nowMinutes = now.getHours() * 60 + now.getMinutes();
+    const openMinutes = openH * 60 + openM;
+    const closeMinutes = closeH * 60 + closeM;
+
+    return nowMinutes >= openMinutes && nowMinutes < closeMinutes;
+  };
+
   const onCheckoutSave = async (userFormData: UserFormData) => {
     if (!restaurant) {
       return;
@@ -205,6 +236,8 @@ const DetailPage = () => {
       </div>
     );
   }
+
+  const isRestaurantOpen = computeIsRestaurantOpen();
 
   return (
     <div className="flex flex-col gap-7 sm:gap-10 px-2 sm:px-6 md:px-0">
@@ -301,7 +334,7 @@ const DetailPage = () => {
             <CardFooter>
               <CheckoutButton
                 onCheckoutSave={onCheckoutSave}
-                disabled={cartItems.length === 0}
+                disabled={cartItems.length === 0 || !isRestaurantOpen}
                 isLoading={isPending}
               />
             </CardFooter>
