@@ -7,6 +7,7 @@ import { Separator } from "@/components/ui/separator";
 import CuisineSection from "./CuisineSection";
 import MenuSection from "./MenuSection";
 import ImageSection from "./ImageSection";
+import AvailabilitySection from "./AvailabilitySection";
 import { ButtonLoading } from "@/components/LoadingButton";
 import { Button } from "@/components/ui/button";
 import type { Restaurant } from "@/types";
@@ -34,6 +35,10 @@ const formSchema = z
     ),
     imageUrl: z.string().optional(),
     imageFile: z.instanceof(File, { message: "image is required" }).optional(),
+    openingTime: z.string().optional(),
+    closingTime: z.string().optional(),
+    daysOpen: z.array(z.string()).optional(),
+    isTemporarilyClosed: z.boolean().optional(),
   })
   .refine((data) => data.imageUrl || data.imageFile, {
     message: "Either image url or image file must be provided",
@@ -62,6 +67,10 @@ const ManageRestaurantForm = ({ onSave, isLoading, restaurant }: Props) => {
       estimatedDeliveryTime: 0,
       cuisines: [],
       menuItems: [{ name: "", price: 0 }],
+      openingTime: "",
+      closingTime: "",
+      daysOpen: ["Mon", "Tue", "Wed", "Thu", "Fri"],
+      isTemporarilyClosed: false,
     },
   });
 
@@ -111,6 +120,23 @@ const ManageRestaurantForm = ({ onSave, isLoading, restaurant }: Props) => {
       formData.append(`cuisines[${index}]`, cuisine);
     });
 
+    // Opening hours & availability
+    if (formDataJSON.openingTime) {
+      formData.append("openingTime", formDataJSON.openingTime);
+    }
+    if (formDataJSON.closingTime) {
+      formData.append("closingTime", formDataJSON.closingTime);
+    }
+    if (formDataJSON.daysOpen && formDataJSON.daysOpen.length > 0) {
+      formDataJSON.daysOpen.forEach((day, index) => {
+        formData.append(`daysOpen[${index}]`, day);
+      });
+    }
+    formData.append(
+      "isTemporarilyClosed",
+      String(formDataJSON.isTemporarilyClosed ?? false)
+    );
+
     formDataJSON.menuItems.forEach((menuItem, index) => {
       formData.append(`menuItems[${index}][name]`, menuItem.name);
       formData.append(
@@ -144,7 +170,15 @@ const ManageRestaurantForm = ({ onSave, isLoading, restaurant }: Props) => {
         <MenuSection />
         <Separator />
         <ImageSection />
-        {isLoading ? <ButtonLoading /> : <Button type="submit" className="w-full sm:w-auto">Submit</Button>}
+        <Separator />
+        <AvailabilitySection />
+        {isLoading ? (
+          <ButtonLoading />
+        ) : (
+          <Button type="submit" className="w-full sm:w-auto">
+            Submit
+          </Button>
+        )}
       </form>
     </Form>
   );

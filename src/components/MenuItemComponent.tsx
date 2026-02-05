@@ -10,7 +10,7 @@ type Props = {
 const MenuItemComponent = ({ menuItem, addToCart }: Props) => {
   return (
     <Card
-      className="relative group flex flex-row items-center gap-3 sm:gap-4 p-2 sm:p-3 transition border-orange-100/70 border hover:border-orange-300 shadow-sm hover:shadow-lg bg-white hover:bg-orange-50 cursor-pointer"
+      className="relative group flex flex-row items-center gap-3 sm:gap-4 p-2 sm:p-3 transition border-orange-100/70 border hover:border-orange-100 shadow-sm hover:shadow-lg bg-white hover:bg-orange-50 cursor-pointer"
       onClick={addToCart}
       tabIndex={0}
       role="button"
