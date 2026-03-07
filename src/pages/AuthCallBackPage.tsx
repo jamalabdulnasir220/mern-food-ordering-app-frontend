@@ -14,7 +14,14 @@ const AuthCallBackPage = () => {
 
   useEffect(() => {
     const createAndNavigate = async () => {
-      if (user?.sub && user?.email && !isUserCreated.current) {
+      // If we hit this page without a valid Auth0 user (e.g. via back button),
+      // just send the user to the homepage instead of showing an error state.
+      if (!user) {
+        navigate("/", { replace: true });
+        return;
+      }
+
+      if (user.sub && user.email && !isUserCreated.current) {
         // Get role from localStorage (set during signup) or default to customer
         const raw = localStorage.getItem("signup_role")
         // const role = signupRole || "customer"; // Default to customer if no role specified
@@ -45,24 +52,24 @@ const AuthCallBackPage = () => {
             !result.country;
 
           if (needsProfile) {
-            navigate("/user-profile");
+            navigate("/user-profile", { replace: true });
             return;
           }
 
           const returnTo = location.state?.returnTo;
 
           if (returnTo && returnTo !== "/auth-callback") {
-            navigate(returnTo);
+            navigate(returnTo, { replace: true });
           } else if (result && result.role === "restaurant_manager") {
-            navigate("/manager-dashboard");
+            navigate("/manager-dashboard", { replace: true });
           } else if (result && result.role === "admin") {
-            navigate("/admin");
+            navigate("/admin", { replace: true });
           } else {
-            navigate("/");
+            navigate("/", { replace: true });
           }
         } catch (error) {
           console.error("Auth callback error:", error);
-          navigate("/");
+          navigate("/", { replace: true });
         }
       }
     };
