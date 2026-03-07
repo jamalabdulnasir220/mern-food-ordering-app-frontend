@@ -1,4 +1,4 @@
-import { StrictMode } from "react";
+// import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import { BrowserRouter as Router } from "react-router-dom";
@@ -26,7 +26,7 @@ declare global {
 window.__TANSTACK_QUERY_CLIENT__ = queryClient;
 
 createRoot(document.getElementById("root")!).render(
-  <StrictMode>
+
     <Router>
       <QueryClientProvider client={queryClient}>
         <Auth0ProviderWithNavigate>
@@ -35,5 +35,5 @@ createRoot(document.getElementById("root")!).render(
         </Auth0ProviderWithNavigate>
       </QueryClientProvider>
     </Router>
-  </StrictMode>
+  
 );

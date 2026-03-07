@@ -80,6 +80,8 @@ const AdminDashboardPage = () => {
     return "";
   };
 
+  console.log(managers);
+
   return (
     <div className="space-y-10 bg-gray-50 min-h-screen p-10">
       <h1 className="text-3xl font-bold">Admin Dashboard</h1>

@@ -28,14 +28,26 @@ const AuthCallBackPage = () => {
           const result = await createUser({
             auth0Id: user.sub,
             email: user.email,
-            role
+            role,
           });
 
-        if (signupRole) {
-          localStorage.removeItem("signup_role");
-        }
+          if (signupRole) {
+            localStorage.removeItem("signup_role");
+          }
 
           isUserCreated.current = true;
+
+          // If profile details are incomplete, always send user to profile page first
+          const needsProfile =
+            !result.name ||
+            !result.addressLine1 ||
+            !result.city ||
+            !result.country;
+
+          if (needsProfile) {
+            navigate("/user-profile");
+            return;
+          }
 
           const returnTo = location.state?.returnTo;
 
