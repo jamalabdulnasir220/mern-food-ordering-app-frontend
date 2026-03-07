@@ -81,6 +81,7 @@ export const useUpdateMyUser = () => {
 
   if (isSuccess) {
     toast.success("User Profile Updated!!");
+    
   }
 
   if (error) {

@@ -16,6 +16,7 @@ const Header = () => {
     }
     return "/";
   };
+  console.log(getLogoLink());
 
   return (
     <div className="py-3 px-2 sm:py-4 sm:px-0">

@@ -1,6 +1,7 @@
 import type { Order, Restaurant } from "@/types";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
@@ -51,6 +52,7 @@ export const useGetMyRestaurant = () => {
 export const useCreateRestaurant = () => {
   const { getAccessTokenSilently } = useAuth0();
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
 
   const {
     mutateAsync: createRestaurant,
@@ -87,10 +89,15 @@ export const useCreateRestaurant = () => {
 
       return response.json();
     },
-    onSuccess: () => {
-      // Invalidate and refetch restaurant data
+    onSuccess: (restaurant) => {
+      // Prime the cache with the newly created restaurant
+      queryClient.setQueryData(["fetchMyRestaurant"], restaurant);
+
+      // Invalidate and refetch restaurant data in the background
       queryClient.invalidateQueries({ queryKey: ["fetchMyRestaurant"] });
+
       toast.success("Restaurant created!");
+      navigate("/manager-dashboard");
     },
   });
 
