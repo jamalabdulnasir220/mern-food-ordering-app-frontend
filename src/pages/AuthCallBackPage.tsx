@@ -4,6 +4,7 @@ import {
   type CreateUserRequest,
 } from "@/api/authRouter";
 import type { User } from "@/types";
+import { resolvePostAuthPath } from "@/lib/postAuthNavigation";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useEffect, useRef, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -27,15 +28,7 @@ const navigateAfterAuth = (
     return;
   }
 
-  if (returnTo && returnTo !== "/auth-callback") {
-    navigate(returnTo, { replace: true });
-  } else if (result.role === "restaurant_manager") {
-    navigate("/manager-dashboard", { replace: true });
-  } else if (result.role === "admin") {
-    navigate("/admin", { replace: true });
-  } else {
-    navigate("/", { replace: true });
-  }
+  navigate(resolvePostAuthPath(result.role, returnTo), { replace: true });
 };
 
 const AuthCallBackPage = () => {

@@ -2,6 +2,7 @@ import { useGetMyUser, useUpdateMyUser } from "@/api/authRouter";
 import UserProfileForm, {
   type UserFormData,
 } from "@/forms/user-profile-form/UserProfileForm";
+import { resolvePostAuthPath } from "@/lib/postAuthNavigation";
 import { useLocation, useNavigate } from "react-router-dom";
 
 const UserProfilePage = () => {
@@ -22,23 +23,7 @@ const UserProfilePage = () => {
   const handleSave = async (data: UserFormData) => {
     const updated = await updateUser(data);
 
-    if (
-      returnTo &&
-      returnTo !== "/auth-callback" &&
-      returnTo !== "/user-profile"
-    ) {
-      navigate(returnTo, { replace: true });
-      return;
-    }
-
-    // After saving profile, navigate based on role
-    if (updated?.role === "restaurant_manager") {
-      navigate("/manager-dashboard");
-    } else if (updated?.role === "admin") {
-      navigate("/admin");
-    } else {
-      navigate("/");
-    }
+    navigate(resolvePostAuthPath(updated.role, returnTo), { replace: true });
   };
 
   return (
