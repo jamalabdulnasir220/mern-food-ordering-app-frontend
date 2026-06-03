@@ -10,7 +10,7 @@ type Props = {
 const MenuItemComponent = ({ menuItem, addToCart }: Props) => {
   return (
     <Card
-      className="relative group flex flex-row items-center gap-3 sm:gap-4 p-2 sm:p-3 transition border-orange-100/70 border hover:border-orange-100 shadow-sm hover:shadow-lg bg-white hover:bg-orange-50 cursor-pointer"
+      className="group relative flex cursor-pointer flex-row items-center gap-3 border border-brand-border bg-card p-2 shadow-sm transition hover:border-brand hover:bg-brand-muted/50 hover:shadow-md sm:gap-4 sm:p-3"
       onClick={addToCart}
       tabIndex={0}
       role="button"
@@ -28,16 +28,16 @@ const MenuItemComponent = ({ menuItem, addToCart }: Props) => {
       )}
       <div className="flex-1">
         <CardHeader className="p-0 mb-0.5 sm:mb-1">
-          <CardTitle className="text-base sm:text-lg font-semibold text-gray-800 group-hover:text-orange-700 transition-colors">
+          <CardTitle className="text-base font-semibold text-foreground transition-colors group-hover:text-brand sm:text-lg">
             {menuItem.name}
           </CardTitle>
         </CardHeader>
-        <CardContent className="p-0 text-[16px] sm:text-[18px] mt-0.5 sm:mt-1 text-orange-700 font-bold">
+        <CardContent className="mt-0.5 p-0 text-base font-bold text-brand sm:mt-1 sm:text-lg">
           GHC{(menuItem.price / 100).toFixed(2)}
         </CardContent>
       </div>
       <button
-        className="ml-2 sm:ml-3 bg-orange-500 hover:bg-orange-600 text-white rounded-full p-1.5 sm:p-2 transition shadow group-hover:scale-110 focus:outline-none focus:ring-2 focus:ring-orange-300"
+        className="ml-2 rounded-full bg-brand p-1.5 text-brand-foreground shadow transition hover:bg-brand/90 group-hover:scale-110 focus:outline-none focus:ring-2 focus:ring-brand sm:ml-3 sm:p-2"
         aria-label="Add to cart"
         tabIndex={-1}
         type="button"

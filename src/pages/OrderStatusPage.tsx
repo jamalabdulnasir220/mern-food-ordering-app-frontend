@@ -1,18 +1,22 @@
 import { useGetMyOrders } from "@/api/orderRouter";
-import OrderStatusDetail from "@/components/OrderStatusDetail";
-import OrderStatusHeader from "@/components/OrderStatusHeader";
-import OrderStatusTracker from "@/components/OrderStatusTracker";
-import { AspectRatio } from "@/components/ui/aspect-ratio";
+import OrderCard from "@/components/orders/OrderCard";
+import PageLoader from "@/components/ui/page-loader";
 import { Button } from "@/components/ui/button";
-import { PartyPopper, Loader2, PackageSearch } from "lucide-react";
-import { useEffect, useState } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
+import type { Order } from "@/types";
+import { PartyPopper, PackageSearch } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { Link, useSearchParams } from "react-router-dom";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
+
+type OrderTab = "active" | "past";
+
+const isActiveOrder = (order: Order) => order.status !== "delivered";
 
 const OrderStatusPage = () => {
   const { orders, isPending } = useGetMyOrders();
-  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
+  const [tab, setTab] = useState<OrderTab>("active");
   const [showSuccessBanner, setShowSuccessBanner] = useState(
     () => searchParams.get("success") === "true",
   );
@@ -24,7 +28,8 @@ const OrderStatusPage = () => {
 
     setShowSuccessBanner(true);
     toast.success("Order placed successfully!", {
-      description: "We're confirming your payment and will update the status here.",
+      description:
+        "We're confirming your payment and will update the status here.",
     });
 
     const nextParams = new URLSearchParams(searchParams);
@@ -32,114 +37,152 @@ const OrderStatusPage = () => {
     setSearchParams(nextParams, { replace: true });
   }, [searchParams, setSearchParams]);
 
+  const { activeOrders, pastOrders } = useMemo(() => {
+    if (!orders) {
+      return { activeOrders: [], pastOrders: [] };
+    }
+    return {
+      activeOrders: orders.filter(isActiveOrder),
+      pastOrders: orders.filter((o) => !isActiveOrder(o)),
+    };
+  }, [orders]);
+
+  const displayedOrders = tab === "active" ? activeOrders : pastOrders;
+  const latestOrderId = orders?.[0]?._id;
+
+  useEffect(() => {
+    if (!orders?.length) {
+      return;
+    }
+    if (activeOrders.length === 0 && pastOrders.length > 0) {
+      setTab("past");
+    }
+  }, [orders, activeOrders.length, pastOrders.length]);
+
   if (isPending) {
-    return (
-      <div className="flex flex-col items-center justify-center min-h-[40vh] px-2 sm:px-4">
-        <Loader2 className="animate-spin h-10 w-10 sm:h-12 sm:w-12 text-orange-500 mb-3 sm:mb-4" />
-        <div className="text-base sm:text-lg font-semibold text-gray-600">
-          Loading your orders...
-        </div>
-      </div>
-    );
+    return <PageLoader label="Loading your orders..." />;
   }
 
   if (!orders || orders.length === 0) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[40vh] bg-gray-50 rounded-lg p-4 sm:p-10">
-        <PackageSearch className="h-11 w-11 sm:h-14 sm:w-14 text-orange-400 mb-3 sm:mb-4" />
-        <div className="text-lg sm:text-2xl font-bold text-gray-700 mb-1 sm:mb-2">
-          No orders found
-        </div>
-        <div className="text-gray-500 text-sm sm:text-base mb-3 sm:mb-4 text-center">
-          You haven&apos;t placed any orders yet.
-          <br />
-          Start exploring restaurants and place your first order!
-        </div>
-        <a
-          href="/"
-          className="inline-block px-4 sm:px-6 py-2 bg-orange-500 hover:bg-orange-600 transition font-bold rounded text-white text-sm sm:text-base"
-        >
-          Browse Restaurants
-        </a>
+      <div className="mx-auto flex max-w-lg flex-col items-center justify-center rounded-2xl border border-dashed border-brand-border bg-card p-8 text-center sm:p-12">
+        <PackageSearch className="mb-4 h-14 w-14 text-brand" aria-hidden />
+        <h2 className="text-xl font-bold text-foreground sm:text-2xl">
+          No orders yet
+        </h2>
+        <p className="mt-2 text-sm text-muted-foreground sm:text-base">
+          When you place an order, it will show up here with live status updates.
+        </p>
+        <Button asChild className="mt-6 font-bold">
+          <Link to="/">Browse restaurants</Link>
+        </Button>
       </div>
     );
   }
 
-  const latestOrderId = orders[0]?._id;
-
   return (
-    <div className="space-y-6 sm:space-y-8 px-2 sm:px-4 md:px-0 pb-8">
-      <div className="mb-6 sm:mb-8">
-        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 tracking-tight">
-          Your Orders
+    <div className="mx-auto max-w-3xl space-y-6 pb-8">
+      <header>
+        <h1 className="text-2xl font-bold tracking-tight text-foreground sm:text-3xl">
+          Your orders
         </h1>
-        <p className="text-gray-600 text-sm sm:text-base mt-2">
-          Track the status of your recent orders
+        <p className="mt-1 text-sm text-muted-foreground sm:text-base">
+          {orders.length} order{orders.length === 1 ? "" : "s"} total
+          {activeOrders.length > 0 && (
+            <> · {activeOrders.length} in progress</>
+          )}
         </p>
-      </div>
+      </header>
 
       {showSuccessBanner && (
-        <div className="rounded-xl border-2 border-green-300 bg-gradient-to-r from-green-50 to-emerald-50 px-4 py-4 sm:px-6 sm:py-5 flex gap-3 sm:gap-4 items-start shadow-sm">
-          <div className="bg-green-500 rounded-full p-2 shrink-0">
-            <PartyPopper className="text-white w-6 h-6" />
+        <div
+          className="flex gap-3 rounded-xl border border-green-200 bg-success-muted px-4 py-4 dark:border-green-800 sm:gap-4 sm:px-5"
+          role="status"
+        >
+          <div className="shrink-0 rounded-full bg-success p-2 text-white">
+            <PartyPopper className="h-5 w-5" aria-hidden />
           </div>
           <div>
-            <h2 className="text-lg sm:text-xl font-bold text-green-900">
-              Order placed successfully!
-            </h2>
-            <p className="text-green-800 text-sm sm:text-base mt-1">
-              Sit tight — we&apos;re confirming your payment and your order status
-              will update on this page automatically.
+            <h2 className="font-bold text-foreground">Order placed!</h2>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Payment is being confirmed. Status updates appear below
+              automatically.
             </p>
           </div>
         </div>
       )}
 
-      {orders.map((order) => (
-        <div
-          key={order._id}
-          className="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300"
+      <div
+        className="flex gap-1 rounded-xl border border-brand-border bg-brand-muted/50 p-1"
+        role="tablist"
+        aria-label="Filter orders"
+      >
+        <button
+          type="button"
+          role="tab"
+          aria-selected={tab === "active"}
+          onClick={() => setTab("active")}
+          className={cn(
+            "flex-1 rounded-lg px-3 py-2.5 text-sm font-semibold transition sm:px-4",
+            tab === "active"
+              ? "bg-card text-brand shadow-sm"
+              : "text-muted-foreground hover:text-brand",
+          )}
         >
-          <div className="bg-linear-to-r from-orange-50 to-orange-100/50 px-4 sm:px-6 py-4 border-b border-orange-100">
-            <div className="flex justify-between items-start sm:items-center sm:flex-row flex-col gap-4 mb-4">
-              <OrderStatusHeader order={order} />
-              <Button
-                className="bg-orange-500 hover:bg-orange-600 text-white font-bold sm:w-auto w-full shrink-0"
-                onClick={() => {
-                  navigate(`/detail/${order.restaurant._id}`, {
-                    state: { reorderItems: order.cartItems },
-                  });
-                }}
-              >
-                Order Again
-              </Button>
-            </div>
-            <OrderStatusTracker
-              order={order}
-              justPlaced={showSuccessBanner && order._id === latestOrderId}
-            />
-          </div>
-          <div className="p-4 sm:p-6">
-            <div className="grid gap-6 sm:gap-8 md:grid-cols-2">
-              <OrderStatusDetail order={order} />
-              <div className="relative rounded-lg overflow-hidden shadow-md border border-gray-200 h-full w-full flex">
-                <AspectRatio ratio={16 / 5} className="w-full h-full">
-                  <img
-                    src={order.restaurant.imageUrl}
-                    className="absolute inset-0 w-full h-full object-cover"
-                    alt={order.restaurant.restaurantName + " image"}
-                  />
-                  <div className="absolute bottom-0 left-0 right-0 bg-linear-to-t from-black/80 to-transparent px-3 py-2 sm:px-4 sm:py-2.5 flex items-end">
-                    <p className="text-white font-bold text-sm sm:text-base m-0 leading-tight">
-                      {order.restaurant.restaurantName}
-                    </p>
-                  </div>
-                </AspectRatio>
-              </div>
-            </div>
-          </div>
+          Active ({activeOrders.length})
+        </button>
+        <button
+          type="button"
+          role="tab"
+          aria-selected={tab === "past"}
+          onClick={() => setTab("past")}
+          className={cn(
+            "flex-1 rounded-lg px-3 py-2.5 text-sm font-semibold transition sm:px-4",
+            tab === "past"
+              ? "bg-card text-brand shadow-sm"
+              : "text-muted-foreground hover:text-brand",
+          )}
+        >
+          Past ({pastOrders.length})
+        </button>
+      </div>
+
+      {displayedOrders.length === 0 ? (
+        <div className="rounded-xl border border-dashed border-border bg-card px-6 py-10 text-center">
+          <p className="font-medium text-foreground">
+            {tab === "active"
+              ? "No active orders right now"
+              : "No past orders yet"}
+          </p>
+          <p className="mt-1 text-sm text-muted-foreground">
+            {tab === "active"
+              ? "Delivered orders appear under Past."
+              : "Completed deliveries will show up here."}
+          </p>
+          {tab === "active" && pastOrders.length > 0 && (
+            <Button
+              variant="link"
+              className="mt-2 text-brand"
+              onClick={() => setTab("past")}
+            >
+              View past orders
+            </Button>
+          )}
         </div>
-      ))}
+      ) : (
+        <ul className="space-y-6">
+          {displayedOrders.map((order) => (
+            <li key={order._id}>
+              <OrderCard
+                order={order}
+                justPlaced={
+                  showSuccessBanner && order._id === latestOrderId
+                }
+              />
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
 };

@@ -5,135 +5,113 @@ import {
   useUpdateMyRestaurant,
 } from "@/api/restaurantRouter";
 import OrderItemCard from "@/components/OrderItemCard";
+import PageLoader from "@/components/ui/page-loader";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import ManageRestaurantForm from "@/forms/manage-restaurant-form/ManageRestaurantForm";
+import { Badge } from "@/components/ui/badge";
 import {
-  Loader2,
   PackageSearch,
   UtensilsCrossed,
   ClipboardList,
 } from "lucide-react";
 
-
 const ManageRestaurantPage = () => {
-
   const { createRestaurant, isLoading: isCreating } = useCreateRestaurant();
   const { updateRestaurant, isLoading: isUpdating } = useUpdateMyRestaurant();
-  const { myRestaurant, isPending: isGetRestaurantLoading } = useGetMyRestaurant();
+  const { myRestaurant, isPending: isGetRestaurantLoading } =
+    useGetMyRestaurant();
   const { restaurantOrders, isPending: isLoadingOrders } =
     useGetMyRestaurantOrders({ enabled: !!myRestaurant });
-  // const { currentUser } = useGetMyUser();
 
   const handleCreateRestaurant = (restaurantFormData: FormData) => {
-    // if (currentUser?.applicationStatus !== "approved") {
-    //   toast.error("Your account has not been approved yet. Please contact admin for approval.");
-    //   return;
-    // }
     createRestaurant(restaurantFormData);
-
-
   };
 
   const handleUpdateRestaurant = (restaurantFormData: FormData) => {
-    // if (currentUser?.applicationStatus !== "approved") {
-    //   toast.error("Your account has not been approved yet. Please contact admin for approval.");
-    //   return;
-    // }
-    updateRestaurant(restaurantFormData)
-
+    updateRestaurant(restaurantFormData);
   };
 
   const isEditing = !!myRestaurant;
-
-  // Filter out delivered orders - only show pending orders
   const pendingOrders =
     restaurantOrders?.filter((order) => order.status !== "delivered") || [];
 
   return (
     <div className="space-y-6 sm:space-y-8">
-      <div className="mb-6 sm:mb-8">
-        <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold text-gray-900 tracking-tight flex items-center gap-3">
-          <UtensilsCrossed className="text-orange-500 w-8 h-8 sm:w-10 sm:h-10" />
+      <header>
+        <h1 className="flex items-center gap-2 text-2xl font-bold tracking-tight text-foreground sm:gap-3 sm:text-3xl md:text-4xl">
+          <UtensilsCrossed className="h-7 w-7 shrink-0 text-brand sm:h-9 sm:w-9 md:h-10 md:w-10" />
           Restaurant Management
         </h1>
-        <p className="text-gray-600 text-sm sm:text-base mt-2">
+        <p className="mt-2 text-sm text-muted-foreground sm:text-base">
           Manage your restaurant details and track incoming orders
         </p>
-      </div>
+      </header>
 
       <Tabs defaultValue="manage-restaurant" className="w-full">
-        <TabsList className="grid w-full grid-cols-2 bg-gray-100 p-1 rounded-lg">
+        <TabsList className="grid h-auto w-full grid-cols-2 p-1">
           <TabsTrigger
             value="orders"
-            className="data-[state=active]:bg-white data-[state=active]:shadow-sm flex items-center gap-2"
+            className="flex items-center gap-2 py-2.5 text-sm sm:text-base"
           >
-            <ClipboardList className="w-4 h-4" />
+            <ClipboardList className="h-4 w-4 shrink-0" />
             <span>Orders</span>
             {pendingOrders.length > 0 && (
-              <span className="bg-orange-500 text-white text-xs font-bold px-2 py-0.5 rounded-full">
+              <Badge className="bg-brand text-brand-foreground">
                 {pendingOrders.length}
-              </span>
+              </Badge>
             )}
           </TabsTrigger>
           <TabsTrigger
             value="manage-restaurant"
-            className="data-[state=active]:bg-white data-[state=active]:shadow-sm flex items-center gap-2"
+            className="flex items-center gap-2 py-2.5 text-sm sm:text-base"
           >
-            <UtensilsCrossed className="w-4 h-4" />
-            <span>Restaurant Details</span>
+            <UtensilsCrossed className="h-4 w-4 shrink-0" />
+            <span className="hidden sm:inline">Restaurant </span>
+            Details
           </TabsTrigger>
         </TabsList>
 
         <TabsContent value="orders" className="mt-6">
           {isGetRestaurantLoading ? (
-            <div className="flex flex-col items-center justify-center min-h-[40vh] bg-gray-50 rounded-xl p-8">
-              <Loader2 className="animate-spin h-10 w-10 sm:h-12 sm:w-12 text-orange-500 mb-3 sm:mb-4" />
-              <div className="text-base sm:text-lg font-semibold text-gray-600">
-                Loading restaurant data...
-              </div>
-            </div>
+            <PageLoader label="Loading restaurant data..." />
           ) : !myRestaurant ? (
-            <div className="flex flex-col items-center justify-center min-h-[40vh] bg-gray-50 rounded-xl p-8">
-              <UtensilsCrossed className="h-16 w-16 sm:h-20 sm:w-20 text-gray-300 mb-4" />
-              <div className="text-xl sm:text-2xl font-bold text-gray-700 mb-2">
-                No Restaurant Found
-              </div>
-              <div className="text-gray-500 text-sm sm:text-base text-center max-w-md">
-                Create your restaurant in the "Restaurant Details" tab to start receiving orders.
-              </div>
+            <div className="flex min-h-[40vh] flex-col items-center justify-center rounded-2xl border border-dashed border-brand-border bg-card p-6 text-center sm:p-10">
+              <UtensilsCrossed className="mb-4 h-16 w-16 text-muted-foreground/40 sm:h-20 sm:w-20" />
+              <h2 className="text-xl font-bold text-foreground sm:text-2xl">
+                No restaurant yet
+              </h2>
+              <p className="mt-2 max-w-md text-sm text-muted-foreground sm:text-base">
+                Create your restaurant in the Restaurant Details tab to start
+                receiving orders.
+              </p>
             </div>
           ) : isLoadingOrders ? (
-            <div className="flex flex-col items-center justify-center min-h-[40vh] bg-gray-50 rounded-xl p-8">
-              <Loader2 className="animate-spin h-10 w-10 sm:h-12 sm:w-12 text-orange-500 mb-3 sm:mb-4" />
-              <div className="text-base sm:text-lg font-semibold text-gray-600">
-                Loading orders...
-              </div>
-            </div>
+            <PageLoader label="Loading orders..." />
           ) : pendingOrders.length === 0 ? (
-            <div className="flex flex-col items-center justify-center min-h-[40vh] bg-gray-50 rounded-xl p-8">
-              <PackageSearch className="h-16 w-16 sm:h-20 sm:w-20 text-orange-400 mb-4" />
-              <div className="text-xl sm:text-2xl font-bold text-gray-700 mb-2">
+            <div className="flex min-h-[40vh] flex-col items-center justify-center rounded-2xl border border-dashed border-brand-border bg-card p-6 text-center sm:p-10">
+              <PackageSearch className="mb-4 h-16 w-16 text-brand sm:h-20 sm:w-20" />
+              <h2 className="text-xl font-bold text-foreground sm:text-2xl">
                 No pending orders
-              </div>
-              <div className="text-gray-500 text-sm sm:text-base text-center max-w-md">
+              </h2>
+              <p className="mt-2 max-w-md text-sm text-muted-foreground sm:text-base">
                 {restaurantOrders && restaurantOrders.length > 0
-                  ? "All orders have been delivered! Great work! 🎉"
-                  : "You don't have any orders at the moment. Orders will appear here when customers place them."}
-              </div>
+                  ? "All orders have been delivered. Great work!"
+                  : "Orders will appear here when customers place them."}
+              </p>
             </div>
           ) : (
             <div className="space-y-4 sm:space-y-6">
-              <div className="flex items-center justify-between bg-white rounded-lg shadow-sm border border-gray-200 p-4">
+              <div className="flex flex-col gap-3 rounded-xl border border-border bg-card p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between">
                 <div>
-                  <h2 className="text-lg sm:text-xl font-bold text-gray-900">
+                  <h2 className="text-lg font-bold text-foreground sm:text-xl">
                     Pending Orders
                   </h2>
-                  <p className="text-sm sm:text-base text-gray-600 mt-1">
+                  <p className="mt-1 text-sm text-muted-foreground">
                     {pendingOrders.length}{" "}
                     {pendingOrders.length === 1 ? "order" : "orders"} pending
                     {restaurantOrders &&
                       restaurantOrders.length > pendingOrders.length && (
-                        <span className="text-gray-400">
+                        <span className="text-muted-foreground/70">
                           {" "}
                           ({restaurantOrders.length - pendingOrders.length}{" "}
                           delivered)
@@ -141,8 +119,8 @@ const ManageRestaurantPage = () => {
                       )}
                   </p>
                 </div>
-                <div className="bg-orange-100 rounded-full px-4 py-2">
-                  <span className="text-orange-700 font-bold text-lg sm:text-xl">
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-brand-muted">
+                  <span className="text-lg font-bold text-brand sm:text-xl">
                     {pendingOrders.length}
                   </span>
                 </div>
@@ -157,11 +135,13 @@ const ManageRestaurantPage = () => {
         </TabsContent>
 
         <TabsContent value="manage-restaurant" className="mt-6">
-          <ManageRestaurantForm
-            restaurant={myRestaurant}
-            onSave={isEditing ? handleUpdateRestaurant : handleCreateRestaurant}
-            isLoading={isCreating || isUpdating}
-          />
+          <div className="rounded-2xl border border-border bg-card p-4 shadow-sm sm:p-6 md:p-8">
+            <ManageRestaurantForm
+              restaurant={myRestaurant}
+              onSave={isEditing ? handleUpdateRestaurant : handleCreateRestaurant}
+              isLoading={isCreating || isUpdating}
+            />
+          </div>
         </TabsContent>
       </Tabs>
     </div>

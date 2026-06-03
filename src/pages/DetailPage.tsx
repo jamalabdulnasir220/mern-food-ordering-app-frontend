@@ -5,7 +5,7 @@ import MenuItemComponent from "@/components/MenuItemComponent";
 import OrderSummary from "@/components/OrderSummary";
 import RestaurantInfo from "@/components/RestaurantInfo";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
-import { Card, CardFooter } from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { UserFormData } from "@/forms/user-profile-form/UserProfileForm";
 import type { MenuItem, OrderCartItem } from "@/types";
@@ -323,23 +323,27 @@ const DetailPage = () => {
             </TabsContent>
           </Tabs>
         </div>
-        {/* Checkout div */}
-        <div className="mt-6 md:mt-0">
-          <Card>
+        <aside className="mt-6 md:sticky md:top-24 md:mt-0 md:self-start">
+          <div className="overflow-hidden rounded-2xl border border-brand-border bg-card shadow-lg">
             <OrderSummary
               restaurant={restaurant}
               cartItems={cartItems}
               removeFromCart={removeFromCart}
             />
-            <CardFooter>
+            <div className="border-t border-brand-border bg-brand-muted/40 p-4">
+              {!isRestaurantOpen && (
+                <p className="mb-3 rounded-lg border border-warning/30 bg-warning-muted px-3 py-2 text-center text-xs font-medium text-foreground sm:text-sm">
+                  This restaurant is not accepting orders right now.
+                </p>
+              )}
               <CheckoutButton
                 onCheckoutSave={onCheckoutSave}
                 disabled={cartItems.length === 0 || !isRestaurantOpen}
                 isLoading={isPending}
               />
-            </CardFooter>
-          </Card>
-        </div>
+            </div>
+          </div>
+        </aside>
       </div>
     </div>
   );

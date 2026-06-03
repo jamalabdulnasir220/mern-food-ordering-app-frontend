@@ -21,11 +21,11 @@ const RestaurantManagerRoute = () => {
   // We allow pending status to access the page, but we will block "submissions" on the page itself.
   if (currentUser?.applicationStatus === "rejected") {
     return (
-        <div className="flex justify-center items-center h-screen bg-gray-50">
-            <div className="text-center p-8 bg-white shadow-lg rounded-lg">
-                <h1 className="text-2xl font-bold text-red-600 mb-4">Application Rejected</h1>
-                <p className="text-gray-600">Your application to become a restaurant manager has been rejected.</p>
-                <p className="text-gray-600">Please contact support for more information.</p>
+        <div className="flex h-screen items-center justify-center bg-background px-4">
+            <div className="rounded-lg bg-card p-8 text-center shadow-lg">
+                <h1 className="mb-4 text-2xl font-bold text-destructive">Application Rejected</h1>
+                <p className="text-muted-foreground">Your application to become a restaurant manager has been rejected.</p>
+                <p className="text-muted-foreground">Please contact support for more information.</p>
             </div>
         </div>
     )

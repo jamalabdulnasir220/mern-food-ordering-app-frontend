@@ -20,13 +20,56 @@ import {
   DollarSign,
   ShoppingBag,
   Loader2,
+  ChefHat,
+  Package,
+  Truck,
+  CheckCircle2,
 } from "lucide-react";
+import { formatOrderMoney } from "@/lib/orderTotals";
+import { formatOrderDateTime } from "@/lib/orderFormatters";
 
 type Props = {
   order: Order;
 };
 
-const formatMoney = (value: number) => `GHC${(value / 100).toFixed(2)}`;
+const statusStyles: Record<
+  OrderStatus,
+  { badge: string; icon: typeof Package }
+> = {
+  placed: {
+    badge:
+      "bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-950 dark:text-blue-200 dark:border-blue-800",
+    icon: Package,
+  },
+  paid: {
+    badge:
+      "bg-amber-100 text-amber-900 border-amber-200 dark:bg-amber-950 dark:text-amber-200 dark:border-amber-800",
+    icon: Clock,
+  },
+  inProgress: {
+    badge:
+      "bg-brand-muted text-brand border-brand-border",
+    icon: ChefHat,
+  },
+  outForDelivery: {
+    badge:
+      "bg-violet-100 text-violet-800 border-violet-200 dark:bg-violet-950 dark:text-violet-200 dark:border-violet-800",
+    icon: Truck,
+  },
+  delivered: {
+    badge:
+      "bg-green-100 text-green-800 border-green-200 dark:bg-green-950 dark:text-green-200 dark:border-green-800",
+    icon: CheckCircle2,
+  },
+};
+
+const borderAccent: Record<OrderStatus, string> = {
+  placed: "border-l-blue-500",
+  paid: "border-l-amber-500",
+  inProgress: "border-l-brand",
+  outForDelivery: "border-l-violet-500",
+  delivered: "border-l-emerald-500",
+};
 
 const OrderItemCard = ({ order }: Props) => {
   const [status, setStatus] = useState<OrderStatus>(order.status);
@@ -34,115 +77,68 @@ const OrderItemCard = ({ order }: Props) => {
 
   useEffect(() => {
     setStatus(order.status);
-  }, [order]);
+  }, [order.status]);
 
   const handleStatusChange = async (newStatus: OrderStatus) => {
     await updateRestaurantStatus({ orderId: order._id, status: newStatus });
     setStatus(newStatus);
   };
 
-  const getTime = () => {
-    const orderDateTime = new Date(order.createdAt);
-    const hours = orderDateTime.getHours();
-    const minutes = orderDateTime.getMinutes();
-    const paddedMinutes = minutes < 10 ? `0${minutes}` : minutes;
-    return `${hours}:${paddedMinutes}`;
-  };
-
-  const getOrderStatusInfo = () => {
-    return ORDER_STATUS.find((o) => o.value === status) || ORDER_STATUS[0];
-  };
-
-  const getStatusColor = () => {
-    switch (status) {
-      case "placed":
-        return "bg-blue-100 text-blue-700 border-blue-200";
-      case "paid":
-        return "bg-yellow-100 text-yellow-700 border-yellow-200";
-      case "inProgress":
-        return "bg-orange-100 text-orange-700 border-orange-200";
-      case "outForDelivery":
-        return "bg-purple-100 text-purple-700 border-purple-200";
-      case "delivered":
-        return "bg-green-100 text-green-700 border-green-200";
-      default:
-        return "bg-gray-100 text-gray-700 border-gray-200";
-    }
-  };
-
-  const statusInfo = getOrderStatusInfo();
-
-  // Get border color based on status for better visual distinction
-  const getBorderColor = () => {
-    switch (status) {
-      case "placed":
-        return "border-l-4 border-l-blue-500";
-      case "paid":
-        return "border-l-4 border-l-yellow-500";
-      case "inProgress":
-        return "border-l-4 border-l-orange-500";
-      case "outForDelivery":
-        return "border-l-4 border-l-purple-500";
-      case "delivered":
-        return "border-l-4 border-l-green-500";
-      default:
-        return "border-l-4 border-l-gray-500";
-    }
-  };
-
-  // Get order number from ID (last 6 characters)
-  const orderNumber = order._id.slice(-6).toUpperCase();
+  const statusInfo =
+    ORDER_STATUS.find((o) => o.value === status) || ORDER_STATUS[0];
+  const { badge, icon: StatusIcon } = statusStyles[status];
 
   return (
     <Card
-      className={`bg-white rounded-xl shadow-lg border-2 border-gray-200 hover:shadow-xl transition-all duration-300 overflow-hidden ${getBorderColor()}`}
+      className={`overflow-hidden border-2 border-border shadow-sm transition hover:shadow-md ${borderAccent[status]} border-l-4`}
     >
-      <div className="bg-gradient-to-r from-orange-50 to-orange-100/50 px-4 sm:px-6 py-4 border-b border-orange-100">
-        <div className="flex items-center justify-between mb-3">
-          <div className="flex items-center gap-3">
+      <div className="border-b border-brand-border bg-gradient-to-r from-brand-muted to-card px-4 py-4 sm:px-6">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex flex-wrap items-center gap-2 sm:gap-3">
             <Badge
-              className={`${getStatusColor()} border font-semibold text-xs sm:text-sm px-3 py-1.5`}
+              className={`border px-3 py-1.5 text-xs font-semibold sm:text-sm ${badge}`}
             >
+              <StatusIcon className="mr-1.5 h-4 w-4" aria-hidden />
               {statusInfo.label}
             </Badge>
-            <span className="text-xs sm:text-sm text-gray-500 font-medium">
-              Order #{orderNumber}
+            <span className="text-sm font-medium text-foreground">
+              {order.deliveryDetails.name}
             </span>
           </div>
-          <div className="flex items-center gap-2 text-gray-600">
-            <Clock className="w-4 h-4 text-orange-500" />
-            <span className="text-sm sm:text-base font-medium">
-              {getTime()}
+          <div className="flex items-center gap-2 text-muted-foreground">
+            <Clock className="h-4 w-4 text-brand" aria-hidden />
+            <span className="text-sm font-medium">
+              {formatOrderDateTime(order.createdAt)}
             </span>
           </div>
         </div>
       </div>
 
       <CardHeader className="pb-4">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <div className="bg-gray-50 rounded-lg p-3 sm:p-4 flex items-start gap-3">
-            <div className="bg-orange-100 rounded-lg p-2 flex-shrink-0">
-              <User className="text-orange-600" size={18} />
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-4">
+          <div className="flex items-start gap-3 rounded-lg bg-muted p-3 sm:p-4">
+            <div className="shrink-0 rounded-lg bg-brand-muted p-2">
+              <User className="text-brand" size={18} aria-hidden />
             </div>
-            <div className="flex-1 min-w-0">
-              <span className="text-xs sm:text-sm text-gray-500 font-medium block mb-1">
-                Customer Name
+            <div className="min-w-0 flex-1">
+              <span className="mb-1 block text-xs font-medium text-muted-foreground sm:text-sm">
+                Customer
               </span>
-              <span className="text-sm sm:text-base font-semibold text-gray-900">
+              <span className="text-sm font-semibold text-foreground sm:text-base">
                 {order.deliveryDetails.name}
               </span>
             </div>
           </div>
 
-          <div className="bg-gray-50 rounded-lg p-3 sm:p-4 flex items-start gap-3">
-            <div className="bg-orange-100 rounded-lg p-2 flex-shrink-0">
-              <MapPin className="text-orange-600" size={18} />
+          <div className="flex items-start gap-3 rounded-lg bg-muted p-3 sm:p-4">
+            <div className="shrink-0 rounded-lg bg-brand-muted p-2">
+              <MapPin className="text-brand" size={18} aria-hidden />
             </div>
-            <div className="flex-1 min-w-0">
-              <span className="text-xs sm:text-sm text-gray-500 font-medium block mb-1">
-                Delivery Address
+            <div className="min-w-0 flex-1">
+              <span className="mb-1 block text-xs font-medium text-muted-foreground sm:text-sm">
+                Delivery address
               </span>
-              <span className="text-sm sm:text-base font-semibold text-gray-900 break-words">
+              <span className="break-words text-sm font-semibold text-foreground sm:text-base">
                 {order.deliveryDetails.addressLine1},{" "}
                 {order.deliveryDetails.city}
               </span>
@@ -153,55 +149,55 @@ const OrderItemCard = ({ order }: Props) => {
 
       <Separator />
 
-      <CardContent className="pt-6 space-y-6">
-        <div className="bg-orange-50 rounded-lg p-4 sm:p-5 border border-orange-100">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="bg-orange-500 rounded-lg p-2">
-              <ShoppingBag className="text-white" size={18} />
+      <CardContent className="space-y-5 pt-5 sm:space-y-6 sm:pt-6">
+        <div className="rounded-lg border border-brand-border bg-brand-muted/50 p-4 sm:p-5">
+          <div className="mb-3 flex items-center gap-3">
+            <div className="rounded-lg bg-brand p-2">
+              <ShoppingBag className="text-brand-foreground" size={18} aria-hidden />
             </div>
-            <span className="font-bold text-gray-800 text-base sm:text-lg">
-              Order Items
+            <span className="text-base font-bold text-foreground sm:text-lg">
+              Order items
             </span>
           </div>
-          <div className="space-y-2.5">
+          <ul className="space-y-2">
             {order.cartItems.map((cartItem) => (
-              <div
+              <li
                 key={cartItem.menuItemId}
-                className="bg-white rounded-lg p-3 sm:p-4 flex justify-between items-center shadow-sm border border-orange-100"
+                className="flex items-center justify-between rounded-lg border border-border bg-card px-3 py-2.5 sm:px-4 sm:py-3"
               >
-                <span className="font-semibold text-gray-800 text-sm sm:text-base flex-1">
+                <span className="flex-1 text-sm font-semibold text-foreground sm:text-base">
                   {cartItem.name}
                 </span>
-                <Badge className="bg-orange-500 text-white font-bold text-xs sm:text-sm px-3 py-1 ml-3">
+                <Badge className="ml-2 bg-brand text-brand-foreground">
                   ×{cartItem.quantity}
                 </Badge>
-              </div>
+              </li>
             ))}
-          </div>
+          </ul>
         </div>
 
-        <div className="bg-gradient-to-r from-green-50 to-emerald-50 rounded-lg p-4 sm:p-5 border-2 border-green-200 flex items-center justify-between">
+        <div className="flex items-center justify-between rounded-lg border border-emerald-200 bg-success-muted px-4 py-4 dark:border-emerald-800 sm:px-5">
           <div className="flex items-center gap-3">
-            <div className="bg-green-500 rounded-lg p-2">
-              <DollarSign className="text-white" size={20} />
+            <div className="rounded-lg bg-success p-2 text-white">
+              <DollarSign size={20} aria-hidden />
             </div>
             <div>
-              <span className="text-xs sm:text-sm text-gray-600 font-medium block">
-                Total Amount
+              <span className="block text-xs font-medium text-muted-foreground sm:text-sm">
+                Total amount
               </span>
-              <span className="text-xl sm:text-2xl font-extrabold text-green-700">
-                {formatMoney(order.totalAmount)}
+              <span className="text-xl font-extrabold text-emerald-700 dark:text-emerald-400 sm:text-2xl">
+                {formatOrderMoney(order.totalAmount)}
               </span>
             </div>
           </div>
         </div>
 
-        <div className="bg-white rounded-lg p-4 sm:p-5 border border-gray-200">
+        <div className="rounded-lg border border-border bg-card p-4 sm:p-5">
           <Label
-            htmlFor="status"
-            className="text-sm sm:text-base font-semibold text-gray-700 mb-3 block"
+            htmlFor={`status-${order._id}`}
+            className="mb-3 block text-sm font-semibold text-foreground sm:text-base"
           >
-            Update Order Status
+            Update order status
           </Label>
           <Select
             value={status}
@@ -209,8 +205,8 @@ const OrderItemCard = ({ order }: Props) => {
             onValueChange={(value) => handleStatusChange(value as OrderStatus)}
           >
             <SelectTrigger
-              id="status"
-              className="w-full h-11 sm:h-12 text-sm sm:text-base"
+              id={`status-${order._id}`}
+              className="h-11 w-full text-sm sm:h-12 sm:text-base"
             >
               <SelectValue placeholder="Select status" />
             </SelectTrigger>
@@ -227,8 +223,8 @@ const OrderItemCard = ({ order }: Props) => {
             </SelectContent>
           </Select>
           {isPending && (
-            <div className="flex items-center gap-2 mt-3 text-sm text-gray-600">
-              <Loader2 className="animate-spin w-4 h-4" />
+            <div className="mt-3 flex items-center gap-2 text-sm text-muted-foreground">
+              <Loader2 className="h-4 w-4 animate-spin" aria-hidden />
               <span>Updating status...</span>
             </div>
           )}

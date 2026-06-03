@@ -9,23 +9,24 @@ interface Props {
 
 const CuisineCheckbox = ({ cuisine, field }: Props) => {
   return (
-    <FormItem className="flex flex-row items-center space-x-1 space-y-0 mt-2">
+    <FormItem className="mt-2 flex flex-row items-center space-y-0 space-x-2 rounded-lg border border-border bg-card px-2 py-2">
       <FormControl>
         <Checkbox
-          className="bg-white"
           checked={field.value.includes(cuisine)}
           onCheckedChange={(checked) => {
             if (checked) {
               field.onChange([...field.value, cuisine]);
             } else {
               field.onChange(
-                field.value.filter((value: string) => value !== cuisine)
+                field.value.filter((value: string) => value !== cuisine),
               );
             }
           }}
         />
       </FormControl>
-      <FormLabel className="text-sm font-normal">{cuisine}</FormLabel>
+      <FormLabel className="text-sm font-normal text-foreground">
+        {cuisine}
+      </FormLabel>
     </FormItem>
   );
 };

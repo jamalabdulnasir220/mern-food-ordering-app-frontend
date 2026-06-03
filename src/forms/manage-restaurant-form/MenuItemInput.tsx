@@ -15,6 +15,9 @@ interface Props {
   removeMenuItem: () => void;
 }
 
+const fileInputClass =
+  "cursor-pointer file:mr-2 file:rounded-md file:border-0 file:bg-brand-muted file:px-2 file:py-1 file:text-sm file:font-semibold file:text-brand hover:file:bg-accent sm:file:mr-4 sm:file:px-4 sm:file:py-2";
+
 const MenuItemInput = ({ index, removeMenuItem }: Props) => {
   const { control, watch } = useFormContext();
 
@@ -29,21 +32,17 @@ const MenuItemInput = ({ index, removeMenuItem }: Props) => {
   }, [imageFile, imageUrl]);
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-[2fr_1fr_2fr_1fr_auto] gap-3 md:gap-2 items-end border-b pb-4 md:pb-2 md:border-b-0">
+    <div className="grid grid-cols-1 items-end gap-4 rounded-xl border border-border bg-muted/30 p-4 md:grid-cols-[2fr_1fr_2fr_auto_auto] md:gap-2 md:border-0 md:bg-transparent md:p-0">
       <FormField
         control={control}
         name={`menuItems.${index}.name`}
         render={({ field }) => (
           <FormItem>
-            <FormLabel className="flex items-center gap-1 text-sm font-medium text-gray-700">
+            <FormLabel className="text-sm font-medium">
               Name <FormMessage />
             </FormLabel>
             <FormControl>
-              <Input
-                {...field}
-                placeholder="Cheese Pizza"
-                className="bg-white border-gray-300 focus:border-orange-500 focus:ring-orange-500"
-              />
+              <Input {...field} placeholder="Cheese Pizza" />
             </FormControl>
           </FormItem>
         )}
@@ -53,7 +52,7 @@ const MenuItemInput = ({ index, removeMenuItem }: Props) => {
         name={`menuItems.${index}.price`}
         render={({ field }) => (
           <FormItem>
-            <FormLabel className="flex items-center gap-1 text-sm font-medium text-gray-700">
+            <FormLabel className="text-sm font-medium">
               Price (GHC) <FormMessage />
             </FormLabel>
             <FormControl>
@@ -63,7 +62,6 @@ const MenuItemInput = ({ index, removeMenuItem }: Props) => {
                 step="0.01"
                 min="0"
                 placeholder="8.00"
-                className="bg-white border-gray-300 focus:border-orange-500 focus:ring-orange-500"
               />
             </FormControl>
           </FormItem>
@@ -75,13 +73,11 @@ const MenuItemInput = ({ index, removeMenuItem }: Props) => {
         name={`menuItems.${index}.imageFile`}
         render={({ field: { value, onChange, ...fieldProps } }) => (
           <FormItem>
-            <FormLabel className="flex items-center gap-1 text-sm font-medium text-gray-700">
-              Image
-            </FormLabel>
+            <FormLabel className="text-sm font-medium">Image</FormLabel>
             <FormControl>
               <Input
                 {...fieldProps}
-                className="bg-white border-gray-300 focus:border-orange-500 focus:ring-orange-500 file:bg-orange-50 file:text-orange-700 file:border-0 file:rounded-md file:px-2 file:py-1 file:mr-2 file:hover:bg-orange-100 cursor-pointer"
+                className={fileInputClass}
                 type="file"
                 accept=".jpg, .jpeg, .png"
                 onChange={(event) => {
@@ -93,7 +89,7 @@ const MenuItemInput = ({ index, removeMenuItem }: Props) => {
         )}
       />
 
-      <div className="flex justify-center items-center h-10 w-full md:w-20 bg-gray-100 rounded-md overflow-hidden border border-gray-200">
+      <div className="flex h-20 w-full items-center justify-center overflow-hidden rounded-lg border border-border bg-muted md:h-10 md:w-20">
         {preview ? (
           <img
             src={preview}
@@ -101,16 +97,17 @@ const MenuItemInput = ({ index, removeMenuItem }: Props) => {
             className="h-full w-full object-cover"
           />
         ) : (
-          <span className="text-[10px] text-gray-400 font-medium uppercase tracking-wider">
-            No Image
+          <span className="text-[10px] font-medium uppercase tracking-wider text-muted-foreground">
+            No image
           </span>
         )}
       </div>
 
       <Button
         type="button"
+        variant="destructive"
         onClick={removeMenuItem}
-        className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded-lg w-full md:w-auto md:max-h-fit transition-colors shadow-sm"
+        className="w-full font-bold md:w-auto"
       >
         Remove
       </Button>

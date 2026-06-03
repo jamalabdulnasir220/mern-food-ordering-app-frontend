@@ -24,30 +24,34 @@ const Logo = ({
   };
 
   const isWhite = variant === "white";
-  const iconColor = isWhite ? "white" : "#FB923C";
-  const textColor = isWhite ? "text-white" : "text-orange-500";
+  const iconColor = isWhite ? "white" : "currentColor";
+  const textColor = isWhite ? "text-footer-foreground" : "text-brand";
 
   return (
     <div className={`flex items-center gap-2 ${className}`}>
-      {/* Logo SVG - Modern Fork and Plate Design */}
       <svg
-        className={sizeClasses[size]}
+        className={`${sizeClasses[size]} ${isWhite ? "text-footer-foreground" : "text-brand"}`}
         viewBox="0 0 48 48"
         fill="none"
         xmlns="http://www.w3.org/2000/svg"
+        aria-hidden
       >
-        {/* Plate - Simplified */}
         <circle
           cx="24"
           cy="30"
           r="12"
-          fill={isWhite ? "white" : "#FB923C"}
-          stroke={isWhite ? "#FB923C" : "white"}
+          fill={isWhite ? "white" : "currentColor"}
+          className={isWhite ? "" : "text-brand"}
+          stroke={isWhite ? "currentColor" : "white"}
           strokeWidth="2"
         />
-        <circle cx="24" cy="30" r="8" fill={isWhite ? "#FB923C" : "white"} />
-
-        {/* Fork - Simplified and Modern */}
+        <circle
+          cx="24"
+          cy="30"
+          r="8"
+          fill={isWhite ? "currentColor" : "white"}
+          className={isWhite ? "text-brand" : ""}
+        />
         <path
           d="M18 6 L18 20 M16 20 L16 24 L18 24 L18 20 M20 20 L20 24 L18 24 L18 20"
           stroke={iconColor}
@@ -61,8 +65,6 @@ const Logo = ({
           strokeWidth="2.5"
           strokeLinecap="round"
         />
-
-        {/* Spoon - Simplified */}
         <ellipse cx="30" cy="14" rx="2.5" ry="6" fill={iconColor} />
         <path
           d="M30 20 L30 24"
@@ -71,8 +73,6 @@ const Logo = ({
           strokeLinecap="round"
         />
       </svg>
-
-      {/* Text */}
       {showText && (
         <span
           className={`font-bold tracking-tight ${textColor} ${textSizeClasses[size]}`}

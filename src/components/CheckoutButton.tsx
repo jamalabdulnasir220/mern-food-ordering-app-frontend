@@ -45,7 +45,7 @@ const CheckoutButton = ({
     return (
       <Button
         disabled
-        className="flex-1 flex items-center justify-center gap-2 bg-orange-400 cursor-not-allowed px-2 py-2 text-sm sm:text-base"
+        className="flex w-full items-center justify-center gap-2 py-6 text-sm sm:text-base"
       >
         <Loader2 className="animate-spin w-5 h-5" />
         <span className="text-xs sm:text-base">Preparing checkout...</span>
@@ -58,7 +58,7 @@ const CheckoutButton = ({
     return (
       <Button
         onClick={onLogin}
-        className="bg-orange-500 flex-1 font-semibold px-2 py-2 text-sm sm:text-base"
+        className="w-full py-6 text-sm font-semibold sm:text-base"
       >
         <span className="text-xs sm:text-base">Sign up or Log in to checkout</span>
       </Button>
@@ -68,9 +68,9 @@ const CheckoutButton = ({
   // If authenticated but no user profile found after loading
   if (!currentUser) {
     return (
-      <div className="flex-1 flex flex-col items-center justify-center gap-2 p-3 sm:p-4 bg-orange-50 rounded">
-        <UserCircle className="text-orange-400 w-8 h-8 mb-1" />
-        <div className="text-red-500 font-medium text-sm sm:text-base text-center">
+      <div className="flex w-full flex-col items-center justify-center gap-2 rounded-lg bg-brand-muted p-3 sm:p-4">
+        <UserCircle className="mb-1 h-8 w-8 text-brand" />
+        <div className="text-center text-sm font-medium text-destructive sm:text-base">
           Could not load your profile.<br />
           <span className="text-xs sm:text-sm">
             Please try refreshing the page or logging out and in again.
@@ -78,7 +78,7 @@ const CheckoutButton = ({
         </div>
         <Button
           onClick={onLogin}
-          className="mt-1 bg-orange-500 px-3 py-1.5 text-xs sm:text-base"
+          className="mt-1 px-3 py-1.5 text-xs sm:text-base"
         >
           Re-login
         </Button>
@@ -92,12 +92,12 @@ const CheckoutButton = ({
       <DialogTrigger asChild>
         <Button
           disabled={disabled}
-          className="flex-1 bg-orange-500 font-semibold px-2 py-2 text-sm sm:text-base"
+          className="w-full py-6 text-sm font-bold shadow-md sm:text-base"
         >
-          <span className="text-xs sm:text-base">Go to checkout</span>
+          Go to checkout
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-[95vw] sm:max-w-[425px] md:min-w-[700px] bg-gray-50 px-2 sm:px-6 py-3 sm:py-6">
+      <DialogContent className="max-w-[95vw] bg-background px-2 py-3 sm:max-w-[425px] sm:px-6 sm:py-6 md:min-w-[700px]">
         <UserProfileForm
           currentUser={currentUser}
           isLoading={isUserLoading}

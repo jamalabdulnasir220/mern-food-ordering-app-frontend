@@ -2,55 +2,69 @@ import { Link } from "react-router-dom";
 import { Button } from "./ui/button";
 import { useAuth0 } from "@auth0/auth0-react";
 import { useGetMyUser } from "@/api/authRouter";
-import { User, UtensilsCrossed, ClipboardList, LogOut, Heart, ShieldCheck } from "lucide-react";
+import {
+  User,
+  UtensilsCrossed,
+  ClipboardList,
+  LogOut,
+  Heart,
+  ShieldCheck,
+  LayoutDashboard,
+} from "lucide-react";
+import { cn } from "@/lib/utils";
 
 const navLinkClass =
-  "flex gap-3 items-center w-full py-3 px-5 rounded-xl text-base sm:text-lg font-semibold bg-white border border-orange-100 shadow-sm transition-all hover:bg-orange-50 hover:border-orange-200 hover:text-orange-600 group";
-
-const iconClass =
-  "text-orange-400 group-hover:text-orange-500 transition-colors w-6 h-6";
+  "flex w-full items-center gap-3 rounded-xl border border-brand-border bg-card px-4 py-3 text-base font-semibold text-foreground shadow-sm transition hover:border-brand hover:bg-brand-muted hover:text-brand sm:text-lg";
 
 const MobileNavLinks = () => {
   const { logout } = useAuth0();
   const { currentUser } = useGetMyUser();
 
   return (
-    <nav className="w-full flex flex-col gap-3 mt-6">
+    <nav className="mt-4 flex w-full flex-col gap-2">
+      {currentUser?.role === "restaurant_manager" && (
+        <>
+          <Link to="/manager-dashboard" className={navLinkClass}>
+            <LayoutDashboard className="h-5 w-5 text-brand" aria-hidden />
+            <span>Dashboard</span>
+          </Link>
+          <Link to="/manage-restaurant" className={navLinkClass}>
+            <UtensilsCrossed className="h-5 w-5 text-brand" aria-hidden />
+            <span>Manage Restaurant</span>
+          </Link>
+        </>
+      )}
       {currentUser?.role === "customer" && (
         <Link to="/order-status" className={navLinkClass}>
-          <ClipboardList className={iconClass} />
+          <ClipboardList className="h-5 w-5 text-brand" aria-hidden />
           <span>Order Status</span>
         </Link>
       )}
       {currentUser?.role === "customer" && (
         <Link to="/favorites" className={navLinkClass}>
-          <Heart className={iconClass} />
+          <Heart className="h-5 w-5 text-brand" aria-hidden />
           <span>My Favorites</span>
         </Link>
       )}
       {currentUser?.role === "admin" && (
         <Link to="/admin" className={navLinkClass}>
-          <ShieldCheck className={iconClass} />
+          <ShieldCheck className="h-5 w-5 text-brand" aria-hidden />
           <span>Admin Dashboard</span>
         </Link>
       )}
-      {currentUser?.role === "restaurant_manager" && (
-        <Link to="/manage-restaurant" className={navLinkClass}>
-          <UtensilsCrossed className={iconClass} />
-          <span>Manage Restaurant</span>
-        </Link>
-      )}
       <Link to="/user-profile" className={navLinkClass}>
-        <User className={iconClass} />
+        <User className="h-5 w-5 text-brand" aria-hidden />
         <span>User Profile</span>
       </Link>
       <Button
         onClick={() =>
           logout({ logoutParams: { returnTo: window.location.origin } })
         }
-        className="flex gap-3 items-center w-full py-3 px-5 rounded-xl text-base sm:text-lg font-semibold bg-orange-500 text-white mt-4 shadow-md hover:bg-orange-600 hover:shadow-lg active:scale-95 transition-all justify-center"
+        className={cn(
+          "mt-2 w-full justify-center gap-3 py-3 font-semibold sm:text-lg",
+        )}
       >
-        <LogOut className="w-6 h-6 text-white opacity-80" />
+        <LogOut className="h-5 w-5" aria-hidden />
         <span>Log Out</span>
       </Button>
     </nav>

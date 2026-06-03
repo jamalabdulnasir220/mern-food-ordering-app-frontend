@@ -1,14 +1,14 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import z from "zod";
-import { Form, FormControl, FormField, FormItem } from "./ui/form";
+import { Form, FormControl, FormField, FormItem, FormMessage } from "./ui/form";
 import { Search } from "lucide-react";
 import { Input } from "./ui/input";
 import { Button } from "./ui/button";
 import { useEffect } from "react";
 
 const formSchema = z.object({
-  searchQuery: z.string().min(1, "search query cannot be empty"),
+  searchQuery: z.string().min(1, "Enter a city or town to search"),
 });
 
 export type SearchForm = z.infer<typeof formSchema>;
@@ -29,19 +29,12 @@ const SearchBar = ({ onSubmit, placeHolder, onReset, searchQuery }: Props) => {
   });
 
   const handleReset = () => {
-    form.reset({
-      searchQuery: "",
-    });
-
-    if (onReset) {
-      onReset();
-    }
+    form.reset({ searchQuery: "" });
+    onReset?.();
   };
 
   useEffect(() => {
-    form.reset({
-      searchQuery,
-    });
+    form.reset({ searchQuery });
   }, [form, searchQuery]);
 
   return (
@@ -49,17 +42,17 @@ const SearchBar = ({ onSubmit, placeHolder, onReset, searchQuery }: Props) => {
       <form
         onSubmit={form.handleSubmit(onSubmit)}
         className={`
-          flex flex-row items-center justify-between gap-1 sm:gap-2 md:gap-3
-          border-2 rounded-full
-          px-1.5 py-1 sm:px-3 sm:py-2 md:px-4 md:py-3
-          bg-white
-          ${form.formState.errors.searchQuery ? "border-red-500" : ""}
+          flex flex-row items-center justify-between gap-1 rounded-full border-2 bg-card shadow-sm transition-shadow
+          px-1.5 py-1 focus-within:border-brand focus-within:shadow-md
+          sm:gap-2 sm:px-3 sm:py-2 md:gap-3 md:px-4 md:py-3
+          ${form.formState.errors.searchQuery ? "border-destructive" : "border-brand-border"}
         `}
       >
         <Search
           strokeWidth={2.5}
           size={20}
-          className="ml-0.5 text-orange-500 hidden sm:block"
+          className="ml-0.5 shrink-0 text-brand"
+          aria-hidden
         />
         <FormField
           control={form.control}
@@ -69,46 +62,25 @@ const SearchBar = ({ onSubmit, placeHolder, onReset, searchQuery }: Props) => {
               <FormControl>
                 <Input
                   {...field}
-                  className="
-                    border-none shadow-none
-                    text-xs
-                    sm:text-sm
-                    md:text-base
-                    md:text-xl
-                    focus-visible:ring-0
-                    py-1 px-2
-                    sm:py-2 sm:px-3
-                  "
+                  className="border-none bg-transparent px-2 py-1 text-xs shadow-none focus-visible:ring-0 sm:px-3 sm:py-2 sm:text-sm md:text-base"
                   placeholder={placeHolder}
+                  aria-label={placeHolder}
                 />
               </FormControl>
+              <FormMessage className="px-3 text-xs" />
             </FormItem>
           )}
         />
         <Button
           onClick={handleReset}
           type="button"
-          variant={"outline"}
-          className="
-            rounded-full
-            px-1.5 py-1
-            text-xs
-            sm:px-3 sm:py-2 sm:text-sm
-            md:px-5 md:py-2 md:text-base
-          "
+          variant="outline"
+          size="sm"
+          className="rounded-full text-xs sm:text-sm"
         >
           Reset
         </Button>
-        <Button
-          type="submit"
-          className="
-            rounded-full bg-orange-500
-            px-2 py-1
-            text-xs
-            sm:px-4 sm:py-2 sm:text-sm
-            md:px-6 md:py-2 md:text-base
-          "
-        >
+        <Button type="submit" size="sm" className="rounded-full text-xs sm:text-sm">
           Search
         </Button>
       </form>

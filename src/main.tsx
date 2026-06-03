@@ -1,11 +1,11 @@
-// import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import { BrowserRouter as Router } from "react-router-dom";
 import AppRoutes from "./AppRoutes.tsx";
 import Auth0ProviderWithNavigate from "./auth/Auth0ProviderWithNavigate.tsx";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { Toaster } from "sonner";
+import { ThemeProvider } from "@/components/theme-provider";
+import ThemedToaster from "@/components/ThemedToaster";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -15,25 +15,23 @@ const queryClient = new QueryClient({
   },
 });
 
-// This code is only for TypeScript
 declare global {
   interface Window {
     __TANSTACK_QUERY_CLIENT__: import("@tanstack/query-core").QueryClient;
   }
 }
 
-// This code is for all users
 window.__TANSTACK_QUERY_CLIENT__ = queryClient;
 
 createRoot(document.getElementById("root")!).render(
-
-    <Router>
-      <QueryClientProvider client={queryClient}>
+  <Router>
+    <QueryClientProvider client={queryClient}>
+      <ThemeProvider>
         <Auth0ProviderWithNavigate>
           <AppRoutes />
-          <Toaster visibleToasts={1} position="top-right" richColors/>
+          <ThemedToaster />
         </Auth0ProviderWithNavigate>
-      </QueryClientProvider>
-    </Router>
-  
+      </ThemeProvider>
+    </QueryClientProvider>
+  </Router>,
 );

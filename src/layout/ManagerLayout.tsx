@@ -7,9 +7,11 @@ type Props = {
 
 const ManagerLayout = ({ children }: Props) => {
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50">
+    <div className="flex min-h-screen flex-col bg-gradient-to-b from-brand-muted/60 via-background to-background">
       <ManagerHeader />
-      <div className="container mx-auto flex-1 py-10 md:px-10">{children}</div>
+      <div className="container mx-auto flex-1 px-2 py-6 sm:px-4 md:px-10 md:py-10">
+        {children}
+      </div>
       <Footer />
     </div>
   );
