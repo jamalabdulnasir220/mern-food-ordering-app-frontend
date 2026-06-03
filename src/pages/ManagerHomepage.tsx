@@ -10,6 +10,34 @@ import {
   TrendingUp,
 } from "lucide-react";
 import { useGetMyUser } from "@/api/authRouter";
+import { Button } from "@/components/ui/button";
+import { cn } from "@/lib/utils";
+
+type StatCardProps = {
+  title: string;
+  value: string | number;
+  subtitle: string;
+  icon: React.ReactNode;
+  accent: string;
+};
+
+const StatCard = ({ title, value, subtitle, icon, accent }: StatCardProps) => (
+  <div
+    className={cn(
+      "rounded-xl border border-border bg-card p-5 shadow-sm sm:p-6",
+      accent,
+    )}
+  >
+    <div className="mb-3 flex items-center justify-between gap-2">
+      <h3 className="text-base font-bold text-foreground sm:text-lg">{title}</h3>
+      {icon}
+    </div>
+    <div className="text-2xl font-bold text-foreground sm:text-3xl">
+      {value}
+    </div>
+    <p className="mt-1 text-sm text-muted-foreground">{subtitle}</p>
+  </div>
+);
 
 const ManagerHomepage = () => {
   const { currentUser } = useGetMyUser();
@@ -20,25 +48,21 @@ const ManagerHomepage = () => {
   const activeOrders =
     restaurantOrders?.filter((o) => o.status !== "delivered").length || 0;
   const totalOrders = restaurantOrders?.length || 0;
-
-  // Calculate today's date string once
   const today = new Date().toDateString();
 
-  // Today's orders count
   const todaysOrders =
     restaurantOrders?.filter(
-      (o) => new Date(o.createdAt).toDateString() === today
+      (o) => new Date(o.createdAt).toDateString() === today,
     ).length || 0;
 
-  // Revenue analytics (based on paid / delivered orders)
   const completedOrders =
     restaurantOrders?.filter(
-      (o) => o.totalAmount && (o.status === "paid" || o.status === "delivered")
+      (o) => o.totalAmount && (o.status === "paid" || o.status === "delivered"),
     ) || [];
 
   const totalRevenueCents = completedOrders.reduce(
     (sum, o) => sum + (o.totalAmount || 0),
-    0
+    0,
   );
   const todayRevenueCents = completedOrders
     .filter((o) => new Date(o.createdAt).toDateString() === today)
@@ -49,19 +73,15 @@ const ManagerHomepage = () => {
       ? totalRevenueCents / completedOrders.length / 100
       : 0;
 
-  // Top selling items (by quantity)
   const topItems = (() => {
     if (!restaurantOrders) return [];
-
     const itemCountMap = new Map<string, number>();
-
     restaurantOrders.forEach((order) => {
       order.cartItems.forEach((item) => {
         const qty = parseInt(item.quantity, 10) || 0;
         itemCountMap.set(item.name, (itemCountMap.get(item.name) || 0) + qty);
       });
     });
-
     return Array.from(itemCountMap.entries())
       .sort((a, b) => b[1] - a[1])
       .slice(0, 5);
@@ -70,202 +90,178 @@ const ManagerHomepage = () => {
   const formatCurrency = (amountCents: number) =>
     `GHC ${(amountCents / 100).toFixed(2)}`;
 
+  const loading = isOrdersLoading ? "..." : undefined;
+
   return (
-    <div className="flex flex-col gap-8 -mt-16">
-      <div className="bg-white rounded-lg shadow-lg p-8 sm:p-10 text-center">
-        <h1 className="text-3xl sm:text-4xl font-bold text-gray-900 mb-4">
+    <div className="flex flex-col gap-6 sm:gap-8">
+      <div className="rounded-2xl border border-brand-border bg-card p-6 text-center shadow-sm sm:p-10">
+        <h1 className="mb-3 text-2xl font-bold text-foreground sm:text-4xl">
           Welcome back,{" "}
-          <span className="text-orange-600">{currentUser?.name}</span>!
+          <span className="text-brand">{currentUser?.name}</span>!
         </h1>
-        <p className="text-gray-600 text-lg max-w-2xl mx-auto">
+        <p className="mx-auto max-w-2xl text-base text-muted-foreground sm:text-lg">
           Manage your restaurant, track orders, and grow your business with
           GhanaBite.
         </p>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {/* Quick Stat Card 1 */}
-        <div className="bg-white p-6 rounded-lg shadow-md border-l-4 border-orange-500">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-xl font-bold text-gray-800">Active Orders</h3>
-            <Timer className="text-orange-500 w-8 h-8" />
-          </div>
-          <div className="text-3xl font-bold text-gray-900">
-            {isOrdersLoading ? "..." : activeOrders}
-          </div>
-          <p className="text-sm text-gray-500 mt-1">Orders needing attention</p>
-        </div>
-
-        {/* Quick Stat Card 2 */}
-        <div className="bg-white p-6 rounded-lg shadow-md border-l-4 border-blue-500">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-xl font-bold text-gray-800">Today's Orders</h3>
-            <ClipboardList className="text-blue-500 w-8 h-8" />
-          </div>
-          <div className="text-3xl font-bold text-gray-900">
-            {isOrdersLoading ? "..." : todaysOrders}
-          </div>
-          <p className="text-sm text-gray-500 mt-1">Orders placed today</p>
-        </div>
-
-        {/* Quick Stat Card 3 */}
-        <div className="bg-white p-6 rounded-lg shadow-md border-l-4 border-green-500">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-xl font-bold text-gray-800">Total Orders</h3>
-            <TrendingUp className="text-green-500 w-8 h-8" />
-          </div>
-          <div className="text-3xl font-bold text-gray-900">
-            {isOrdersLoading ? "..." : totalOrders}
-          </div>
-          <p className="text-sm text-gray-500 mt-1">All-time orders</p>
-        </div>
-      </div>
-
-      {/* Revenue analytics */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-white p-6 rounded-lg shadow-md border-l-4 border-emerald-500">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-xl font-bold text-gray-800">Total Revenue</h3>
-            <TrendingUp className="text-emerald-500 w-8 h-8" />
-          </div>
-          <div className="text-2xl font-bold text-gray-900">
-            {isOrdersLoading ? "..." : formatCurrency(totalRevenueCents)}
-          </div>
-          <p className="text-sm text-gray-500 mt-1">
-            From paid & delivered orders
+        {myRestaurant && (
+          <p className="mt-2 text-sm font-medium text-brand">
+            {myRestaurant.restaurantName} · {myRestaurant.city}
           </p>
-        </div>
-
-        <div className="bg-white p-6 rounded-lg shadow-md border-l-4 border-purple-500">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-xl font-bold text-gray-800">Today's Revenue</h3>
-            <TrendingUp className="text-purple-500 w-8 h-8" />
-          </div>
-          <div className="text-2xl font-bold text-gray-900">
-            {isOrdersLoading ? "..." : formatCurrency(todayRevenueCents)}
-          </div>
-          <p className="text-sm text-gray-500 mt-1">Revenue generated today</p>
-        </div>
-
-        <div className="bg-white p-6 rounded-lg shadow-md border-l-4 border-indigo-500">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-xl font-bold text-gray-800">
-              Avg. Order Value
-            </h3>
-            <TrendingUp className="text-indigo-500 w-8 h-8" />
-          </div>
-          <div className="text-2xl font-bold text-gray-900">
-            {isOrdersLoading ? "..." : `GHC ${averageOrderValue.toFixed(2)}`}
-          </div>
-          <p className="text-sm text-gray-500 mt-1">
-            Average per completed order
-          </p>
-        </div>
+        )}
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Navigation cards */}
-        <div className="bg-orange-50 p-8 rounded-lg border border-orange-100 flex flex-col items-start gap-4 hover:shadow-lg transition-shadow">
-          <div className="bg-orange-100 p-3 rounded-full">
-            <UtensilsCrossed className="w-8 h-8 text-orange-600" />
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 md:gap-6">
+        <StatCard
+          title="Active Orders"
+          value={loading ?? activeOrders}
+          subtitle="Orders needing attention"
+          icon={<Timer className="h-7 w-7 text-brand sm:h-8 sm:w-8" />}
+          accent="border-l-4 border-l-brand"
+        />
+        <StatCard
+          title="Today's Orders"
+          value={loading ?? todaysOrders}
+          subtitle="Orders placed today"
+          icon={
+            <ClipboardList className="h-7 w-7 text-blue-600 dark:text-blue-400 sm:h-8 sm:w-8" />
+          }
+          accent="border-l-4 border-l-blue-500"
+        />
+        <StatCard
+          title="Total Orders"
+          value={loading ?? totalOrders}
+          subtitle="All-time orders"
+          icon={
+            <TrendingUp className="h-7 w-7 text-emerald-600 dark:text-emerald-400 sm:h-8 sm:w-8" />
+          }
+          accent="border-l-4 border-l-emerald-500"
+        />
+      </div>
+
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 md:gap-6">
+        <StatCard
+          title="Total Revenue"
+          value={loading ?? formatCurrency(totalRevenueCents)}
+          subtitle="From paid & delivered orders"
+          icon={
+            <TrendingUp className="h-7 w-7 text-emerald-600 dark:text-emerald-400 sm:h-8 sm:w-8" />
+          }
+          accent="border-l-4 border-l-emerald-500"
+        />
+        <StatCard
+          title="Today's Revenue"
+          value={loading ?? formatCurrency(todayRevenueCents)}
+          subtitle="Revenue generated today"
+          icon={
+            <TrendingUp className="h-7 w-7 text-violet-600 dark:text-violet-400 sm:h-8 sm:w-8" />
+          }
+          accent="border-l-4 border-l-violet-500"
+        />
+        <StatCard
+          title="Avg. Order Value"
+          value={loading ?? `GHC ${averageOrderValue.toFixed(2)}`}
+          subtitle="Average per completed order"
+          icon={
+            <TrendingUp className="h-7 w-7 text-indigo-600 dark:text-indigo-400 sm:h-8 sm:w-8" />
+          }
+          accent="border-l-4 border-l-indigo-500"
+        />
+      </div>
+
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 md:gap-6">
+        <div className="flex flex-col gap-4 rounded-xl border border-brand-border bg-brand-muted/50 p-6 transition hover:shadow-md sm:p-8">
+          <div className="w-fit rounded-full bg-brand-muted p-3">
+            <UtensilsCrossed className="h-8 w-8 text-brand" />
           </div>
           <div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">
+            <h2 className="mb-2 text-xl font-bold text-foreground sm:text-2xl">
               Manage Restaurant
             </h2>
-            <p className="text-gray-600">
+            <p className="text-sm text-muted-foreground sm:text-base">
               Update your restaurant details, menu items, and business hours.
             </p>
           </div>
-          <Link
-            to="/manage-restaurant"
-            className="mt-2 bg-orange-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-orange-700 transition-colors"
-          >
-            Go to Restaurant Management Page
-          </Link>
+          <Button asChild className="mt-auto w-full font-bold sm:w-auto">
+            <Link to="/manage-restaurant">Restaurant settings</Link>
+          </Button>
         </div>
 
-        <div className="bg-blue-50 p-8 rounded-lg border border-blue-100 flex flex-col items-start gap-4 hover:shadow-lg transition-shadow">
-          <div className="bg-blue-100 p-3 rounded-full">
-            <ClipboardList className="w-8 h-8 text-blue-600" />
+        <div className="flex flex-col gap-4 rounded-xl border border-border bg-card p-6 transition hover:shadow-md sm:p-8">
+          <div className="w-fit rounded-full bg-muted p-3">
+            <ClipboardList className="h-8 w-8 text-blue-600 dark:text-blue-400" />
           </div>
           <div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">
+            <h2 className="mb-2 text-xl font-bold text-foreground sm:text-2xl">
               View Orders
             </h2>
-            <p className="text-gray-600">
+            <p className="text-sm text-muted-foreground sm:text-base">
               Check active orders, update status, and view order history.
             </p>
           </div>
-          <Link
-            to="/manage-restaurant"
-            className="mt-2 bg-blue-600 text-white font-bold py-2 px-6 rounded-lg hover:bg-blue-700 transition-colors"
-          >
-            View Orders
-          </Link>
+          <Button asChild variant="secondary" className="mt-auto w-full font-bold sm:w-auto">
+            <Link to="/manage-restaurant">Go to orders</Link>
+          </Button>
         </div>
       </div>
 
-      {/* Analytics: Top items & recent orders */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <h3 className="text-xl font-bold text-gray-900 mb-4">
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2 lg:gap-6">
+        <div className="rounded-xl border border-border bg-card p-5 shadow-sm sm:p-6">
+          <h3 className="mb-4 text-lg font-bold text-foreground sm:text-xl">
             Top Selling Items
           </h3>
           {isOrdersLoading ? (
-            <p className="text-gray-500 text-sm">Loading...</p>
+            <p className="text-sm text-muted-foreground">Loading...</p>
           ) : topItems.length === 0 ? (
-            <p className="text-gray-500 text-sm">
-              Not enough data yet. When customers start ordering, your top items
-              will appear here.
+            <p className="text-sm text-muted-foreground">
+              When customers start ordering, your top items will appear here.
             </p>
           ) : (
-            <ul className="divide-y divide-gray-100">
+            <ul className="divide-y divide-border">
               {topItems.map(([name, count]) => (
                 <li
                   key={name}
-                  className="py-2 flex items-center justify-between text-sm"
+                  className="flex items-center justify-between py-2.5 text-sm"
                 >
-                  <span className="font-medium text-gray-800">{name}</span>
-                  <span className="text-gray-500">{count} sold</span>
+                  <span className="font-medium text-foreground">{name}</span>
+                  <span className="text-muted-foreground">{count} sold</span>
                 </li>
               ))}
             </ul>
           )}
         </div>
 
-        <div className="bg-white p-6 rounded-lg shadow-md">
-          <h3 className="text-xl font-bold text-gray-900 mb-4">
+        <div className="rounded-xl border border-border bg-card p-5 shadow-sm sm:p-6">
+          <h3 className="mb-4 text-lg font-bold text-foreground sm:text-xl">
             Recent Orders
           </h3>
           {isOrdersLoading ? (
-            <p className="text-gray-500 text-sm">Loading...</p>
+            <p className="text-sm text-muted-foreground">Loading...</p>
           ) : !restaurantOrders || restaurantOrders.length === 0 ? (
-            <p className="text-gray-500 text-sm">
-              No orders yet. Your recent orders will appear here.
+            <p className="text-sm text-muted-foreground">
+              No orders yet. Recent orders will appear here.
             </p>
           ) : (
-            <div className="space-y-2 max-h-64 overflow-y-auto">
+            <div className="max-h-64 space-y-2 overflow-y-auto">
               {restaurantOrders.slice(0, 6).map((order) => (
                 <div
                   key={order._id}
-                  className="flex items-center justify-between text-sm border-b border-gray-100 pb-2 last:border-b-0 last:pb-0"
+                  className="flex items-center justify-between border-b border-border pb-2 text-sm last:border-0 last:pb-0"
                 >
-                  <div className="flex flex-col">
-                    <span className="font-medium text-gray-800">
+                  <div className="min-w-0 flex-1 pr-2">
+                    <span className="block truncate font-medium text-foreground">
                       {order.deliveryDetails.name}
                     </span>
-                    <span className="text-xs text-gray-500">
+                    <span className="text-xs text-muted-foreground">
                       {new Date(order.createdAt).toLocaleString()}
                     </span>
                   </div>
-                  <div className="text-right">
-                    <p className="text-sm font-semibold text-gray-900">
+                  <div className="shrink-0 text-right">
+                    <p className="text-sm font-semibold text-foreground">
                       {order.totalAmount
                         ? formatCurrency(order.totalAmount)
                         : "Pending"}
                     </p>
-                    <p className="text-xs text-gray-500 capitalize">
+                    <p className="text-xs capitalize text-muted-foreground">
                       {order.status}
                     </p>
                   </div>

@@ -31,7 +31,7 @@ const formSchema = z
         price: z.coerce.number().min(1, "price is required"),
         imageFile: z.instanceof(File).optional(),
         imageUrl: z.string().optional(),
-      })
+      }),
     ),
     imageUrl: z.string().optional(),
     imageFile: z.instanceof(File, { message: "image is required" }).optional(),
@@ -55,9 +55,8 @@ type Props = {
 
 const ManageRestaurantForm = ({ onSave, isLoading, restaurant }: Props) => {
   const form = useForm<RestaurantFormData>({
-    // resolver: zodResolver(formSchema),
     resolver: zodResolver(
-      formSchema
+      formSchema,
     ) as unknown as Resolver<RestaurantFormData>,
     defaultValues: {
       restaurantName: "",
@@ -78,49 +77,45 @@ const ManageRestaurantForm = ({ onSave, isLoading, restaurant }: Props) => {
     if (!restaurant) {
       return;
     }
-    const deliveryPriceFormatted = parseInt(
-      (restaurant.deliveryPrice / 100).toFixed(2)
-    );
-
-    const menuItemsFormatted = restaurant.menuItems.map((item) => ({
-      ...item,
-      price: parseInt((item.price / 100).toFixed(2)),
-      imageUrl: item.imageUrl,
-    }));
-
-    const updatedRestaurant = {
-      ...restaurant,
-      deliveryPrice: deliveryPriceFormatted,
-      menuItems: menuItemsFormatted,
-    };
-
-    form.reset(updatedRestaurant);
+    form.reset({
+      restaurantName: restaurant.restaurantName,
+      city: restaurant.city,
+      country: restaurant.country,
+      deliveryPrice: restaurant.deliveryPrice / 100,
+      estimatedDeliveryTime: restaurant.estimatedDeliveryTime,
+      cuisines: restaurant.cuisines,
+      menuItems: restaurant.menuItems.map((item) => ({
+        name: item.name,
+        price: item.price / 100,
+        imageUrl: item.imageUrl,
+      })),
+      imageUrl: restaurant.imageUrl,
+      openingTime: restaurant.openingTime || "",
+      closingTime: restaurant.closingTime || "",
+      daysOpen: restaurant.daysOpen || ["Mon", "Tue", "Wed", "Thu", "Fri"],
+      isTemporarilyClosed: restaurant.isTemporarilyClosed || false,
+    });
   }, [restaurant, form]);
 
   const onSubmit = (formDataJSON: RestaurantFormData) => {
-    // TODO: convert formDataJSON to new FormData object
     const formData = new FormData();
 
     formData.append("restaurantName", formDataJSON.restaurantName);
     formData.append("city", formDataJSON.city);
     formData.append("country", formDataJSON.country);
-
-    // 1GHC == 100Pesewas, so we convert it to pesewas
-
     formData.append(
       "deliveryPrice",
-      (formDataJSON.deliveryPrice * 100).toString()
+      (formDataJSON.deliveryPrice * 100).toString(),
     );
     formData.append(
       "estimatedDeliveryTime",
-      formDataJSON.estimatedDeliveryTime.toString()
+      formDataJSON.estimatedDeliveryTime.toString(),
     );
 
     formDataJSON.cuisines.forEach((cuisine, index) => {
       formData.append(`cuisines[${index}]`, cuisine);
     });
 
-    // Opening hours & availability
     if (formDataJSON.openingTime) {
       formData.append("openingTime", formDataJSON.openingTime);
     }
@@ -134,14 +129,14 @@ const ManageRestaurantForm = ({ onSave, isLoading, restaurant }: Props) => {
     }
     formData.append(
       "isTemporarilyClosed",
-      String(formDataJSON.isTemporarilyClosed ?? false)
+      String(formDataJSON.isTemporarilyClosed ?? false),
     );
 
     formDataJSON.menuItems.forEach((menuItem, index) => {
       formData.append(`menuItems[${index}][name]`, menuItem.name);
       formData.append(
         `menuItems[${index}][price]`,
-        (menuItem.price * 100).toString()
+        (menuItem.price * 100).toString(),
       );
       if (menuItem.imageUrl) {
         formData.append(`menuItems[${index}][imageUrl]`, menuItem.imageUrl);
@@ -161,7 +156,7 @@ const ManageRestaurantForm = ({ onSave, isLoading, restaurant }: Props) => {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-6 sm:space-y-8 bg-gray-50 p-4 sm:p-6 md:p-10 rounded-lg"
+        className="space-y-6 rounded-lg sm:space-y-8"
       >
         <DetailSection />
         <Separator />
@@ -175,8 +170,8 @@ const ManageRestaurantForm = ({ onSave, isLoading, restaurant }: Props) => {
         {isLoading ? (
           <ButtonLoading />
         ) : (
-          <Button type="submit" className="w-full sm:w-auto">
-            Submit
+          <Button type="submit" className="w-full font-bold sm:w-auto">
+            {restaurant ? "Save changes" : "Create restaurant"}
           </Button>
         )}
       </form>

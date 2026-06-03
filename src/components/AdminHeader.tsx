@@ -1,20 +1,24 @@
 import { Link } from "react-router-dom";
 import Logo from "./Logo";
 import UserNameMenu from "./UserNameMenu";
+import ThemeToggle from "./ThemeToggle";
 
 const AdminHeader = () => {
   return (
-    <div className="border-b-2 border-b-orange-500 py-3 px-2 sm:py-4 sm:px-0 bg-slate-900 text-white">
-      <div className="container mx-auto flex justify-between items-center md:px-10">
-        <Link to="/admin" className="hover:opacity-80 transition-opacity">
+    <header className="border-b-2 border-brand bg-card py-3 text-foreground sm:py-4">
+      <div className="container mx-auto flex items-center justify-between gap-2 px-2 md:px-10">
+        <Link to="/admin" className="min-w-0 shrink transition-opacity hover:opacity-80">
           <Logo size="md" showText={true} />
         </Link>
-        <div className="flex items-center gap-4">
-            <span className="font-semibold text-orange-500">Admin Console</span>
-            <UserNameMenu />
+        <div className="flex items-center gap-2 sm:gap-4">
+          <span className="hidden font-semibold text-brand sm:inline">
+            Admin Console
+          </span>
+          <ThemeToggle />
+          <UserNameMenu />
         </div>
       </div>
-    </div>
+    </header>
   );
 };
 

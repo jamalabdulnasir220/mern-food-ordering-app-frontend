@@ -1,4 +1,11 @@
-import { CircleUserRound, LogOut, UserSquare, ClipboardList, UtensilsCrossed, Heart } from "lucide-react";
+import {
+  CircleUserRound,
+  LogOut,
+  UserSquare,
+  ClipboardList,
+  UtensilsCrossed,
+  Heart,
+} from "lucide-react";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -12,31 +19,43 @@ import { Link } from "react-router-dom";
 import { Button } from "./ui/button";
 import { useGetMyUser } from "@/api/authRouter";
 
+const menuLinkClass =
+  "flex items-center gap-2 rounded-md px-2 py-2 font-medium text-foreground transition hover:bg-brand-muted hover:text-brand";
+
 const UserNameMenu = () => {
   const { user, logout } = useAuth0();
   const { currentUser } = useGetMyUser();
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className="flex items-center bg-white rounded-full px-3 py-1 font-bold gap-2 border border-orange-100 shadow-sm hover:shadow-md transition hover:text-orange-500 hover:border-orange-200 group">
-        <CircleUserRound className="text-orange-500 group-hover:text-orange-600" size={24} />
-        <span className="truncate max-w-40 text-xs sm:text-sm">{user?.email}</span>
+      <DropdownMenuTrigger className="group flex max-w-[11rem] items-center gap-2 rounded-full border border-brand-border bg-card px-2 py-1 font-bold shadow-sm transition hover:border-brand hover:shadow-md sm:max-w-[10rem] sm:px-3">
+        <CircleUserRound
+          className="shrink-0 text-brand group-hover:text-brand/90"
+          size={22}
+          aria-hidden
+        />
+        <span className="truncate text-xs sm:text-sm">{user?.email}</span>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="w-56 mt-2 shadow-lg border-2 border-orange-100 rounded-xl px-1 py-1 bg-white">
-        <DropdownMenuLabel className="flex flex-col mb-1">
-          <span className="text-xs font-semibold text-gray-500">Signed in as</span>
-          <span className="font-bold text-orange-600 truncate">{user?.email}</span>
+      <DropdownMenuContent className="mt-2 w-56 rounded-xl border border-brand-border bg-popover p-1 shadow-lg">
+        <DropdownMenuLabel className="mb-1 flex flex-col">
+          <span className="text-xs font-semibold text-muted-foreground">
+            Signed in as
+          </span>
+          <span className="truncate font-bold text-brand">{user?.email}</span>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         {currentUser?.role === "restaurant_manager" && (
           <>
             <DropdownMenuItem asChild>
-              <Link
-                to={"/manager-dashboard"}
-                className="flex items-center gap-2 font-medium text-gray-800 rounded-md px-2 py-2 hover:bg-orange-100 hover:text-orange-600 transition"
-              >
-                <UtensilsCrossed size={18} className="text-orange-500" />
-                Manager Dashboard
+              <Link to="/manager-dashboard" className={menuLinkClass}>
+                <UtensilsCrossed size={18} className="text-brand" aria-hidden />
+                Dashboard
+              </Link>
+            </DropdownMenuItem>
+            <DropdownMenuItem asChild>
+              <Link to="/manage-restaurant" className={menuLinkClass}>
+                <UtensilsCrossed size={18} className="text-brand" aria-hidden />
+                Manage Restaurant
               </Link>
             </DropdownMenuItem>
             <DropdownMenuSeparator />
@@ -45,11 +64,8 @@ const UserNameMenu = () => {
         {currentUser?.role === "customer" && (
           <>
             <DropdownMenuItem asChild>
-              <Link
-                to={"/order-status"}
-                className="flex items-center gap-2 font-medium text-gray-800 rounded-md px-2 py-2 hover:bg-orange-100 hover:text-orange-600 transition"
-              >
-                <ClipboardList size={18} className="text-orange-500" />
+              <Link to="/order-status" className={menuLinkClass}>
+                <ClipboardList size={18} className="text-brand" aria-hidden />
                 Order Status
               </Link>
             </DropdownMenuItem>
@@ -57,21 +73,15 @@ const UserNameMenu = () => {
           </>
         )}
         <DropdownMenuItem asChild>
-          <Link
-            to={"/user-profile"}
-            className="flex items-center gap-2 font-medium text-gray-800 rounded-md px-2 py-2 hover:bg-orange-100 hover:text-orange-600 transition"
-          >
-            <UserSquare size={18} className="text-orange-500" />
+          <Link to="/user-profile" className={menuLinkClass}>
+            <UserSquare size={18} className="text-brand" aria-hidden />
             User Profile
           </Link>
         </DropdownMenuItem>
         {currentUser?.role === "customer" && (
           <DropdownMenuItem asChild>
-            <Link
-              to={"/favorites"}
-              className="flex items-center gap-2 font-medium text-gray-800 rounded-md px-2 py-2 hover:bg-orange-100 hover:text-orange-600 transition"
-            >
-              <Heart size={18} className="text-orange-500" />
+            <Link to="/favorites" className={menuLinkClass}>
+              <Heart size={18} className="text-brand" aria-hidden />
               My Favorites
             </Link>
           </DropdownMenuItem>
@@ -82,10 +92,10 @@ const UserNameMenu = () => {
             onClick={() =>
               logout({ logoutParams: { returnTo: window.location.origin } })
             }
-            className="flex items-center gap-2 w-full justify-start font-semibold px-2 py-2 rounded-md bg-orange-100 text-orange-600 hover:bg-orange-500 hover:text-white transition shadow"
             variant="ghost"
+            className="w-full justify-start font-semibold text-brand hover:bg-brand-muted"
           >
-            <LogOut size={18} className="text-orange-500 group-hover:text-white" />
+            <LogOut size={18} className="mr-2" aria-hidden />
             Log Out
           </Button>
         </DropdownMenuItem>

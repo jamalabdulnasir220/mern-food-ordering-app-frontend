@@ -8,6 +8,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
 import { useFormContext } from "react-hook-form";
+import { cn } from "@/lib/utils";
 
 const DAYS = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
 
@@ -28,12 +29,13 @@ const AvailabilitySection = () => {
   };
 
   return (
-    <div className="space-y-3">
+    <div className="space-y-4">
       <div>
-        <h2 className="text-xl sm:text-2xl font-bold">Hours & Availability</h2>
+        <h2 className="text-xl font-bold text-foreground sm:text-2xl">
+          Hours & Availability
+        </h2>
         <FormDescription>
-          Set when your restaurant is open so customers know when they can
-          order.
+          Set when your restaurant is open so customers know when they can order.
         </FormDescription>
       </div>
 
@@ -41,7 +43,7 @@ const AvailabilitySection = () => {
         control={control}
         name="isTemporarilyClosed"
         render={({ field }) => (
-          <FormItem className="flex flex-row items-center gap-2 rounded-md border border-dashed border-gray-200 bg-white p-3">
+          <FormItem className="flex flex-row items-center gap-3 rounded-lg border border-dashed border-border bg-muted p-3 sm:p-4">
             <FormControl>
               <Checkbox
                 checked={field.value}
@@ -49,7 +51,7 @@ const AvailabilitySection = () => {
               />
             </FormControl>
             <div className="space-y-1">
-              <FormLabel className="font-medium">
+              <FormLabel className="font-medium text-foreground">
                 Temporarily close restaurant
               </FormLabel>
               <FormDescription className="text-xs">
@@ -61,7 +63,7 @@ const AvailabilitySection = () => {
         )}
       />
 
-      <div className="grid gap-3 sm:grid-cols-2">
+      <div className="grid gap-4 sm:grid-cols-2">
         <FormField
           control={control}
           name="openingTime"
@@ -71,7 +73,6 @@ const AvailabilitySection = () => {
               <FormControl>
                 <Input
                   type="time"
-                  className="bg-white"
                   {...field}
                   disabled={isTemporarilyClosed}
                 />
@@ -88,7 +89,6 @@ const AvailabilitySection = () => {
               <FormControl>
                 <Input
                   type="time"
-                  className="bg-white"
                   {...field}
                   disabled={isTemporarilyClosed}
                 />
@@ -103,7 +103,7 @@ const AvailabilitySection = () => {
         <FormDescription className="text-xs">
           Select the days your restaurant is normally open.
         </FormDescription>
-        <div className="flex flex-wrap gap-2 mt-2">
+        <div className="mt-2 flex flex-wrap gap-2">
           {DAYS.map((day) => {
             const checked = daysOpen.includes(day);
             return (
@@ -111,11 +111,12 @@ const AvailabilitySection = () => {
                 key={day}
                 type="button"
                 onClick={() => toggleDay(day, !checked)}
-                className={`px-3 py-1 rounded-full border text-xs sm:text-sm ${
+                className={cn(
+                  "rounded-full border px-3 py-1.5 text-xs font-semibold transition sm:text-sm",
                   checked
-                    ? "bg-orange-500 text-white border-orange-500"
-                    : "bg-white text-gray-700 border-gray-200"
-                }`}
+                    ? "border-brand bg-brand text-brand-foreground"
+                    : "border-border bg-card text-foreground hover:border-brand-border",
+                )}
               >
                 {day}
               </button>

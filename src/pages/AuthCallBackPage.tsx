@@ -133,22 +133,22 @@ const AuthCallBackPage = () => {
 
   if (errorMessage) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 px-4 text-center">
-        <h1 className="text-xl font-bold text-gray-800 mb-2">
+      <div className="flex min-h-screen flex-col items-center justify-center bg-background px-4 text-center">
+        <h1 className="mb-2 text-xl font-bold text-foreground">
           Sign in could not be completed
         </h1>
-        <p className="text-gray-600 mb-6 max-w-md">{errorMessage}</p>
-        <div className="flex gap-3">
+        <p className="mb-6 max-w-md text-muted-foreground">{errorMessage}</p>
+        <div className="flex flex-col gap-2 sm:flex-row sm:gap-3">
           <Link
             to="/"
-            className="px-4 py-2 rounded-lg bg-orange-500 text-white font-semibold hover:bg-orange-600"
+            className="rounded-lg bg-brand px-4 py-2 font-semibold text-brand-foreground hover:bg-brand/90"
           >
             Back to home
           </Link>
           <button
             type="button"
             onClick={() => window.location.reload()}
-            className="px-4 py-2 rounded-lg border border-orange-500 text-orange-600 font-semibold hover:bg-orange-50"
+            className="rounded-lg border border-brand px-4 py-2 font-semibold text-brand hover:bg-brand-muted"
           >
             Try again
           </button>
@@ -158,9 +158,9 @@ const AuthCallBackPage = () => {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50">
+    <div className="flex min-h-screen flex-col items-center justify-center bg-background">
       <svg
-        className="animate-spin h-10 w-10 text-orange-500 mb-4"
+        className="mb-4 h-10 w-10 animate-spin text-brand"
         xmlns="http://www.w3.org/2000/svg"
         fill="none"
         viewBox="0 0 24 24"
@@ -179,7 +179,7 @@ const AuthCallBackPage = () => {
           d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"
         ></path>
       </svg>
-      <span className="text-lg text-gray-700 font-medium">
+      <span className="text-lg font-medium text-muted-foreground">
         Setting up your GhanaBite account...
       </span>
     </div>

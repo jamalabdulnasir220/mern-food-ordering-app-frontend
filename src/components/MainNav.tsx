@@ -5,50 +5,42 @@ import { Link, useLocation } from "react-router-dom";
 import { useGetMyUser } from "@/api/authRouter";
 import { BadgeCheck, ShieldCheck } from "lucide-react";
 
+const navLinkClass =
+  "flex items-center gap-1 rounded-lg bg-brand-muted px-3 py-2 text-sm font-semibold text-brand transition hover:bg-accent sm:px-4";
+
 const MainNav = () => {
   const { loginWithRedirect, isAuthenticated } = useAuth0();
   const { currentUser } = useGetMyUser();
   const { pathname } = useLocation();
 
   return (
-    <nav className="flex items-center gap-3">
+    <nav className="flex items-center gap-2 sm:gap-3">
       {isAuthenticated ? (
         <>
           {currentUser?.role === "customer" && (
-            <Link
-              to={"/order-status"}
-              className="flex items-center gap-1 px-4 py-2 rounded-lg bg-orange-100 text-orange-600 font-semibold transition 
-                         hover:bg-orange-200 hover:text-orange-700 shadow-sm"
-            >
-              <BadgeCheck className="w-5 h-5 text-orange-500" />
-              <span>Order Status</span>
+            <Link to="/order-status" className={navLinkClass}>
+              <BadgeCheck className="h-5 w-5" aria-hidden />
+              <span className="hidden sm:inline">Order Status</span>
+              <span className="sm:hidden">Orders</span>
             </Link>
           )}
           {currentUser?.role === "admin" && (
-            <Link
-              to={"/admin"}
-              className="flex items-center gap-1 px-4 py-2 rounded-lg bg-orange-100 text-orange-600 font-semibold transition 
-                         hover:bg-orange-200 hover:text-orange-700 shadow-sm"
-            >
-              <ShieldCheck className="w-5 h-5 text-orange-500" />
-              <span>Admin Dashboard</span>
+            <Link to="/admin" className={navLinkClass}>
+              <ShieldCheck className="h-5 w-5" aria-hidden />
+              <span className="hidden sm:inline">Admin</span>
             </Link>
           )}
           <UserNameMenu />
         </>
       ) : (
         <>
-          <Link
-            to={"/signup"}
-            className="px-4 py-2 rounded-lg bg-orange-500 text-white font-bold shadow-sm transition 
-                       hover:bg-orange-600 hover:text-white border border-orange-500"
-          >
-            Sign Up
-          </Link>
+          <Button asChild size="sm" className="font-bold sm:text-sm">
+            <Link to="/signup">Sign Up</Link>
+          </Button>
           <Button
             variant="outline"
-            className="px-4 py-2 rounded-lg font-bold border-orange-500 text-orange-500 bg-white 
-                       hover:bg-orange-100 hover:text-orange-600 transition shadow-sm"
+            size="sm"
+            className="border-brand font-bold text-brand hover:bg-brand-muted"
             onClick={async () =>
               await loginWithRedirect({
                 appState: { returnTo: pathname },

@@ -1,17 +1,24 @@
 import { Link } from "react-router-dom";
 import Logo from "./Logo";
 import UserNameMenu from "./UserNameMenu";
+import ThemeToggle from "./ThemeToggle";
 
 const ManagerHeader = () => {
   return (
-    <div className="border-b-2 border-b-orange-500 py-3 px-2 sm:py-4 sm:px-0 bg-white">
-      <div className="container mx-auto flex justify-between items-center md:px-10">
-        <Link to="/manage-restaurant" className="hover:opacity-80 transition-opacity">
+    <header className="border-b-2 border-brand bg-card py-3 sm:py-4">
+      <div className="container mx-auto flex items-center justify-between gap-2 px-2 md:px-10">
+        <Link
+          to="/manage-restaurant"
+          className="min-w-0 shrink transition-opacity hover:opacity-80"
+        >
           <Logo size="md" showText={true} />
         </Link>
-        <UserNameMenu />
+        <div className="flex items-center gap-1 sm:gap-2">
+          <ThemeToggle />
+          <UserNameMenu />
+        </div>
       </div>
-    </div>
+    </header>
   );
 };
 

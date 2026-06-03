@@ -9,10 +9,25 @@ type Props = {
 
 const CustomerLayout = ({ children, showHero = false }: Props) => {
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex min-h-screen flex-col bg-gradient-to-b from-brand-muted/80 via-background to-background">
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-[100] focus:rounded-md focus:bg-brand focus:px-4 focus:py-2 focus:text-brand-foreground"
+      >
+        Skip to main content
+      </a>
       <Header />
-      {showHero && <Hero />}
-      <div className="container mx-auto flex-1 py-10 md:px-10">{children}</div>
+      {showHero && (
+        <div className="container mx-auto px-2 sm:px-4 md:px-10">
+          <Hero />
+        </div>
+      )}
+      <main
+        id="main-content"
+        className="container mx-auto flex-1 px-2 py-6 sm:px-4 md:px-10 md:py-10"
+      >
+        {children}
+      </main>
       <Footer />
     </div>
   );
