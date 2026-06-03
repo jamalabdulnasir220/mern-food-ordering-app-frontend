@@ -2,12 +2,14 @@ import { useGetMyUser, useUpdateMyUser } from "@/api/authRouter";
 import UserProfileForm, {
   type UserFormData,
 } from "@/forms/user-profile-form/UserProfileForm";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const UserProfilePage = () => {
   const { currentUser, isPending: isGettingUser } = useGetMyUser();
   const { updateUser, isPending } = useUpdateMyUser();
   const navigate = useNavigate();
+  const location = useLocation();
+  const returnTo = location.state?.returnTo as string | undefined;
 
   if (isGettingUser) {
     return <div>Loading....</div>;
@@ -19,6 +21,15 @@ const UserProfilePage = () => {
 
   const handleSave = async (data: UserFormData) => {
     const updated = await updateUser(data);
+
+    if (
+      returnTo &&
+      returnTo !== "/auth-callback" &&
+      returnTo !== "/user-profile"
+    ) {
+      navigate(returnTo, { replace: true });
+      return;
+    }
 
     // After saving profile, navigate based on role
     if (updated?.role === "restaurant_manager") {

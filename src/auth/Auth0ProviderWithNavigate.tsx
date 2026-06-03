@@ -10,7 +10,9 @@ const Auth0ProviderWithNavigate = ({
 }: AuthProviderWithNavigateProps) => {
   const domain = import.meta.env.VITE_AUTH0_DOMAIN;
   const clientId = import.meta.env.VITE_AUTH0_CLIENT_ID;
-  const redirectUri = import.meta.env.VITE_AUTH0_CALLBACK_URI;
+  // Must match an entry in Auth0 → Application → Allowed Callback URLs exactly.
+  const redirectUri =
+    import.meta.env.VITE_AUTH0_CALLBACK_URI || window.location.origin;
   const audience = import.meta.env.VITE_AUTH0_AUDIENCE;
 
   if (!domain || !clientId || !redirectUri || !audience) {
@@ -32,6 +34,7 @@ const Auth0ProviderWithNavigate = ({
       authorizationParams={{
         redirect_uri: redirectUri,
         audience,
+        scope: "openid profile email",
       }}
       onRedirectCallback={onRedirectCallback}
       cacheLocation="localstorage"

@@ -3,14 +3,61 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { toast } from "sonner";
 
-const API_BASE_URL =
-  location.hostname === "localhost" ? import.meta.env.VITE_API_BASE_URL : "/api"; 
+export const getApiBaseUrl = () =>
+  location.hostname === "localhost" ? import.meta.env.VITE_API_BASE_URL : "/api";
 
-interface CreateUserRequest {
+const API_BASE_URL = getApiBaseUrl();
+
+export interface CreateUserRequest {
   auth0Id: string;
   email: string;
   role: "customer" | "restaurant_manager";
 }
+
+export const fetchMyUserWithToken = async (
+  accessToken: string,
+): Promise<User | null> => {
+  const response = await fetch(`${API_BASE_URL}/api/my/user`, {
+    method: "GET",
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      "Content-Type": "application/json",
+    },
+  });
+
+  if (response.status === 401 || response.status === 404) {
+    return null;
+  }
+
+  if (!response.ok) {
+    throw new Error("Failed to fetch user profile");
+  }
+
+  return response.json();
+};
+
+export const createMyUserWithToken = async (
+  accessToken: string,
+  newUser: CreateUserRequest,
+): Promise<User> => {
+  const response = await fetch(`${API_BASE_URL}/api/my/user`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(newUser),
+  });
+
+  if (!response.ok) {
+    const data = await response.json().catch(() => null);
+    throw new Error(
+      (data as { message?: string } | null)?.message || "Failed to create user",
+    );
+  }
+
+  return response.json();
+};
 
 interface FormDataToUpdate {
   name: string;

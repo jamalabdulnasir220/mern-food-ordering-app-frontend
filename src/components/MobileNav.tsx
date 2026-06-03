@@ -9,12 +9,13 @@ import {
 import { Separator } from "./ui/separator";
 import { Button } from "./ui/button";
 import { useAuth0 } from "@auth0/auth0-react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import MobileNavLinks from "./MobileNavLinks";
 
 const MobileNav = () => {
   const { loginWithRedirect, isAuthenticated, user } = useAuth0();
   const navigate = useNavigate();
+  const { pathname } = useLocation();
   return (
     <Sheet>
       <SheetTrigger>
@@ -48,7 +49,11 @@ const MobileNav = () => {
                 Sign Up
               </Button>
               <Button
-                onClick={async () => await loginWithRedirect()}
+                onClick={async () =>
+                  await loginWithRedirect({
+                    appState: { returnTo: pathname },
+                  })
+                }
                 variant="outline"
                 className="flex-1 font-bold border-orange-500 text-orange-500 text-sm py-2"
               >

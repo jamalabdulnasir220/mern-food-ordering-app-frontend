@@ -1,6 +1,6 @@
 import type { Order } from "@/types";
 import { Progress } from "./ui/progress";
-import { ORDER_STATUS } from "@/config/order-status-config";
+import { getOrderStatusInfo } from "@/config/order-status-config";
 import { Clock, CheckCircle2, Package, Truck, ChefHat } from "lucide-react";
 import { Badge } from "./ui/badge";
 
@@ -22,12 +22,6 @@ const OrderStatusHeader = ({ order }: Props) => {
     const paddedMinutes = minutes < 10 ? `0${minutes}` : minutes;
 
     return `${hours}:${paddedMinutes}`;
-  };
-
-  const getOrderStatusInfo = () => {
-    return (
-      ORDER_STATUS.find((o) => o.value === order.status) || ORDER_STATUS[0]
-    );
   };
 
   const getStatusIcon = () => {
@@ -64,7 +58,7 @@ const OrderStatusHeader = ({ order }: Props) => {
     }
   };
 
-  const statusInfo = getOrderStatusInfo();
+  const statusInfo = getOrderStatusInfo(order.status);
 
   return (
     <div className="w-full">

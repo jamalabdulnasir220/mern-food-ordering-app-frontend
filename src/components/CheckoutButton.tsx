@@ -33,9 +33,6 @@ const CheckoutButton = ({
       appState: {
         returnTo: pathname,
       },
-      authorizationParams: {
-        screen_hint: "signup",
-      },
     });
   };
 

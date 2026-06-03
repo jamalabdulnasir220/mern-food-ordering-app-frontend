@@ -1,13 +1,14 @@
 import { useAuth0 } from "@auth0/auth0-react";
 import { Button } from "./ui/button";
 import UserNameMenu from "./UserNameMenu";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useGetMyUser } from "@/api/authRouter";
 import { BadgeCheck, ShieldCheck } from "lucide-react";
 
 const MainNav = () => {
   const { loginWithRedirect, isAuthenticated } = useAuth0();
   const { currentUser } = useGetMyUser();
+  const { pathname } = useLocation();
 
   return (
     <nav className="flex items-center gap-3">
@@ -48,7 +49,11 @@ const MainNav = () => {
             variant="outline"
             className="px-4 py-2 rounded-lg font-bold border-orange-500 text-orange-500 bg-white 
                        hover:bg-orange-100 hover:text-orange-600 transition shadow-sm"
-            onClick={async () => await loginWithRedirect()}
+            onClick={async () =>
+              await loginWithRedirect({
+                appState: { returnTo: pathname },
+              })
+            }
           >
             Login
           </Button>

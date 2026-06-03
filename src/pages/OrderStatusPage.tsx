@@ -1,14 +1,36 @@
 import { useGetMyOrders } from "@/api/orderRouter";
 import OrderStatusDetail from "@/components/OrderStatusDetail";
 import OrderStatusHeader from "@/components/OrderStatusHeader";
+import OrderStatusTracker from "@/components/OrderStatusTracker";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Button } from "@/components/ui/button";
-import { Loader2, PackageSearch } from "lucide-react";
-import { useNavigate } from "react-router-dom";
+import { PartyPopper, Loader2, PackageSearch } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { toast } from "sonner";
 
 const OrderStatusPage = () => {
   const { orders, isPending } = useGetMyOrders();
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const [showSuccessBanner, setShowSuccessBanner] = useState(
+    () => searchParams.get("success") === "true",
+  );
+
+  useEffect(() => {
+    if (searchParams.get("success") !== "true") {
+      return;
+    }
+
+    setShowSuccessBanner(true);
+    toast.success("Order placed successfully!", {
+      description: "We're confirming your payment and will update the status here.",
+    });
+
+    const nextParams = new URLSearchParams(searchParams);
+    nextParams.delete("success");
+    setSearchParams(nextParams, { replace: true });
+  }, [searchParams, setSearchParams]);
 
   if (isPending) {
     return (
@@ -43,6 +65,8 @@ const OrderStatusPage = () => {
     );
   }
 
+  const latestOrderId = orders[0]?._id;
+
   return (
     <div className="space-y-6 sm:space-y-8 px-2 sm:px-4 md:px-0 pb-8">
       <div className="mb-6 sm:mb-8">
@@ -53,23 +77,47 @@ const OrderStatusPage = () => {
           Track the status of your recent orders
         </p>
       </div>
+
+      {showSuccessBanner && (
+        <div className="rounded-xl border-2 border-green-300 bg-gradient-to-r from-green-50 to-emerald-50 px-4 py-4 sm:px-6 sm:py-5 flex gap-3 sm:gap-4 items-start shadow-sm">
+          <div className="bg-green-500 rounded-full p-2 shrink-0">
+            <PartyPopper className="text-white w-6 h-6" />
+          </div>
+          <div>
+            <h2 className="text-lg sm:text-xl font-bold text-green-900">
+              Order placed successfully!
+            </h2>
+            <p className="text-green-800 text-sm sm:text-base mt-1">
+              Sit tight — we&apos;re confirming your payment and your order status
+              will update on this page automatically.
+            </p>
+          </div>
+        </div>
+      )}
+
       {orders.map((order) => (
         <div
           key={order._id}
           className="bg-white rounded-xl shadow-lg border border-gray-100 overflow-hidden hover:shadow-xl transition-all duration-300"
         >
-          <div className="bg-linear-to-r from-orange-50 to-orange-100/50 px-4 sm:px-6 py-4 border-b border-orange-100 flex justify-between items-center sm:flex-row flex-col gap-4">
-            <OrderStatusHeader order={order} />
-            <Button
-              className="bg-orange-500 hover:bg-orange-600 text-white font-bold sm:w-auto w-full"
-              onClick={() => {
-                navigate(`/detail/${order.restaurant._id}`, {
-                  state: { reorderItems: order.cartItems },
-                });
-              }}
-            >
-              Order Again
-            </Button>
+          <div className="bg-linear-to-r from-orange-50 to-orange-100/50 px-4 sm:px-6 py-4 border-b border-orange-100">
+            <div className="flex justify-between items-start sm:items-center sm:flex-row flex-col gap-4 mb-4">
+              <OrderStatusHeader order={order} />
+              <Button
+                className="bg-orange-500 hover:bg-orange-600 text-white font-bold sm:w-auto w-full shrink-0"
+                onClick={() => {
+                  navigate(`/detail/${order.restaurant._id}`, {
+                    state: { reorderItems: order.cartItems },
+                  });
+                }}
+              >
+                Order Again
+              </Button>
+            </div>
+            <OrderStatusTracker
+              order={order}
+              justPlaced={showSuccessBanner && order._id === latestOrderId}
+            />
           </div>
           <div className="p-4 sm:p-6">
             <div className="grid gap-6 sm:gap-8 md:grid-cols-2">
