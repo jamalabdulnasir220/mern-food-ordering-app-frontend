@@ -39,8 +39,9 @@ export const useGetMyOrders = () => {
 
       return response.json();
     },
-    enabled: isAuthenticated, // Only run query when user is authenticated
-    refetchInterval: 5000,
+    enabled: isAuthenticated,
+    refetchInterval: (query) =>
+      query.state.data?.some((order) => order.status === "placed") ? 10000 : false,
   });
 
   return {

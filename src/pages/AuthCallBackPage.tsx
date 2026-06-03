@@ -1,82 +1,168 @@
-import { useCreateMYUser } from "@/api/authRouter";
+import {
+  createMyUserWithToken,
+  fetchMyUserWithToken,
+  type CreateUserRequest,
+} from "@/api/authRouter";
+import type { User } from "@/types";
 import { useAuth0 } from "@auth0/auth0-react";
-import { useEffect, useRef } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+
+const navigateAfterAuth = (
+  navigate: ReturnType<typeof useNavigate>,
+  result: User,
+  returnTo?: string,
+) => {
+  const needsProfile =
+    !result.name ||
+    !result.addressLine1 ||
+    !result.city ||
+    !result.country;
+
+  if (needsProfile) {
+    navigate("/user-profile", {
+      replace: true,
+      state: returnTo ? { returnTo } : undefined,
+    });
+    return;
+  }
+
+  if (returnTo && returnTo !== "/auth-callback") {
+    navigate(returnTo, { replace: true });
+  } else if (result.role === "restaurant_manager") {
+    navigate("/manager-dashboard", { replace: true });
+  } else if (result.role === "admin") {
+    navigate("/admin", { replace: true });
+  } else {
+    navigate("/", { replace: true });
+  }
+};
 
 const AuthCallBackPage = () => {
   const navigate = useNavigate();
-
-  const { user } = useAuth0();
-  const { createUser } = useCreateMYUser();
   const location = useLocation();
+  const {
+    user,
+    isAuthenticated,
+    isLoading,
+    error: auth0Error,
+    getAccessTokenSilently,
+  } = useAuth0();
 
-  const isUserCreated = useRef(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
+  const hasHandledCallback = useRef(false);
 
   useEffect(() => {
-    const createAndNavigate = async () => {
-      // If we hit this page without a valid Auth0 user (e.g. via back button),
-      // just send the user to the homepage instead of showing an error state.
-      if (!user) {
+    const params = new URLSearchParams(window.location.search);
+    const urlError =
+      params.get("error_description") || params.get("error");
+    if (urlError) {
+      setErrorMessage(urlError);
+      return;
+    }
+
+    if (auth0Error) {
+      setErrorMessage(auth0Error.message);
+      return;
+    }
+
+    if (isLoading || hasHandledCallback.current) {
+      return;
+    }
+
+    const syncUserAndNavigate = async () => {
+      if (!isAuthenticated || !user?.sub) {
         navigate("/", { replace: true });
         return;
       }
 
-      if (user.sub && user.email && !isUserCreated.current) {
-        // Get role from localStorage (set during signup) or default to customer
-        const raw = localStorage.getItem("signup_role")
-        // const role = signupRole || "customer"; // Default to customer if no role specified
-        const signupRole =
-          raw === "restaurant_manager" || raw === "customer" ? raw : null;
-        const role = signupRole ?? "customer";
+      const email = user.email;
+      if (!email) {
+        setErrorMessage(
+          "We could not read your email from Auth0. Please ensure your account uses a verified email address.",
+        );
+        return;
+      }
 
+      hasHandledCallback.current = true;
 
+      const raw = localStorage.getItem("signup_role");
+      const signupRole =
+        raw === "restaurant_manager" || raw === "customer" ? raw : null;
+      const role = signupRole ?? "customer";
 
-        try {
-          const result = await createUser({
+      try {
+        const accessToken = await getAccessTokenSilently({
+          authorizationParams: {
+            audience: import.meta.env.VITE_AUTH0_AUDIENCE,
+          },
+        });
+
+        let result =
+          await fetchMyUserWithToken(accessToken);
+
+        if (!result) {
+          const payload: CreateUserRequest = {
             auth0Id: user.sub,
-            email: user.email,
+            email,
             role,
-          });
-
-          if (signupRole) {
-            localStorage.removeItem("signup_role");
-          }
-
-          isUserCreated.current = true;
-
-          // If profile details are incomplete, always send user to profile page first
-          const needsProfile =
-            !result.name ||
-            !result.addressLine1 ||
-            !result.city ||
-            !result.country;
-
-          if (needsProfile) {
-            navigate("/user-profile", { replace: true });
-            return;
-          }
-
-          const returnTo = location.state?.returnTo;
-
-          if (returnTo && returnTo !== "/auth-callback") {
-            navigate(returnTo, { replace: true });
-          } else if (result && result.role === "restaurant_manager") {
-            navigate("/manager-dashboard", { replace: true });
-          } else if (result && result.role === "admin") {
-            navigate("/admin", { replace: true });
-          } else {
-            navigate("/", { replace: true });
-          }
-        } catch (error) {
-          console.error("Auth callback error:", error);
-          navigate("/", { replace: true });
+          };
+          result = await createMyUserWithToken(accessToken, payload);
         }
+
+        if (signupRole) {
+          localStorage.removeItem("signup_role");
+        }
+
+        const returnTo = location.state?.returnTo as string | undefined;
+        navigateAfterAuth(navigate, result, returnTo);
+      } catch (error) {
+        console.error("Auth callback error:", error);
+        hasHandledCallback.current = false;
+        setErrorMessage(
+          error instanceof Error
+            ? error.message
+            : "Failed to finish signing you in. Please try again.",
+        );
       }
     };
 
-    createAndNavigate();
-  }, [user, createUser, navigate, location]);
+    syncUserAndNavigate();
+  }, [
+    user,
+    isAuthenticated,
+    isLoading,
+    auth0Error,
+    getAccessTokenSilently,
+    navigate,
+    location,
+  ]);
 
+  if (errorMessage) {
+    return (
+      <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 px-4 text-center">
+        <h1 className="text-xl font-bold text-gray-800 mb-2">
+          Sign in could not be completed
+        </h1>
+        <p className="text-gray-600 mb-6 max-w-md">{errorMessage}</p>
+        <div className="flex gap-3">
+          <Link
+            to="/"
+            className="px-4 py-2 rounded-lg bg-orange-500 text-white font-semibold hover:bg-orange-600"
+          >
+            Back to home
+          </Link>
+          <button
+            type="button"
+            onClick={() => window.location.reload()}
+            className="px-4 py-2 rounded-lg border border-orange-500 text-orange-600 font-semibold hover:bg-orange-50"
+          >
+            Try again
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50">
