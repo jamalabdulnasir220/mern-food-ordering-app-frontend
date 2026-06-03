@@ -3,7 +3,7 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { toast } from "sonner";
 import type { Review } from "@/types";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const API_BASE_URL = location.hostname === "localhost" ? import.meta.env.VITE_API_BASE_URL : "/api";
 
 type CreateReviewRequest = {
   rating: number;

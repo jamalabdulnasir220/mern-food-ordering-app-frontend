@@ -2,7 +2,7 @@ import type { SearchState } from "@/pages/SearchPage";
 import type { Restaurant, RestaurantSearchResponse } from "@/types";
 import { useQuery } from "@tanstack/react-query";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const API_BASE_URL = location.hostname === "localhost" ? import.meta.env.VITE_API_BASE_URL : "/api";
 
 export const useSearchRestaurants = (
   searchState: SearchState,

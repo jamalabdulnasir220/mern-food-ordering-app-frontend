@@ -4,7 +4,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
+const API_BASE_URL = location.hostname === "localhost" ? import.meta.env.VITE_API_BASE_URL : "/api";
 
 type UpdateOrderStatusRequest = {
   orderId: string;
