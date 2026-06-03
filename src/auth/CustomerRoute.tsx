@@ -6,16 +6,12 @@ const CustomerRoute = () => {
   const { isAuthenticated, isLoading } = useAuth0();
   const { currentUser, isPending } = useGetMyUser();
 
-  if (isLoading) {
-    return null;
-  }
-
   if (!isAuthenticated) {
-      return <Outlet />;
+    return <Outlet />;
   }
 
-  if (isPending) {
-      return null;
+  if (isLoading || isPending) {
+    return null;
   }
 
   if (isAuthenticated && currentUser?.role === "restaurant_manager") {
