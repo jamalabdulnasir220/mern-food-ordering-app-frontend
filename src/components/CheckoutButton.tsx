@@ -97,13 +97,14 @@ const CheckoutButton = ({
           Go to checkout
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-[95vw] bg-background px-2 py-3 sm:max-w-[425px] sm:px-6 sm:py-6 md:min-w-[700px]">
+      <DialogContent className="max-h-[90vh] max-w-[95vw] overflow-y-auto border-brand-border px-2 py-3 text-foreground sm:max-w-[425px] sm:px-6 sm:py-6 md:min-w-[700px]">
         <UserProfileForm
           currentUser={currentUser}
           isLoading={isUserLoading}
           onsave={onCheckoutSave}
           title="Confirm Delivery Details"
           buttonText="Continue to payment"
+          embedded
         />
       </DialogContent>
     </Dialog>

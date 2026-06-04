@@ -15,6 +15,7 @@ import { ButtonLoading } from "@/components/LoadingButton";
 import { Button } from "@/components/ui/button";
 import type { User } from "@/types";
 import { useEffect } from "react";
+import { cn } from "@/lib/utils";
 
 const formSchema = z.object({
   email: z.string().optional(),
@@ -33,6 +34,8 @@ interface UserProfileFormProps {
   currentUser: User;
   title?: string;
   buttonText?: string;
+  /** When true, form is shown inside a dialog (no card chrome). */
+  embedded?: boolean;
 }
 
 const UserProfileForm = ({
@@ -41,6 +44,7 @@ const UserProfileForm = ({
   currentUser,
   title = "User Profile Form",
   buttonText = "Submit",
+  embedded = false,
 }: UserProfileFormProps) => {
   const form = useForm<UserFormData>({
     resolver: zodResolver(formSchema),
@@ -55,10 +59,15 @@ const UserProfileForm = ({
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onsave)}
-        className="space-y-4 bg-gray-50 rounded-lg p-4 md:p-10"
+        className={cn(
+          "space-y-4",
+          !embedded && "rounded-2xl border border-brand-border bg-card p-4 shadow-sm md:p-8",
+        )}
       >
         <div>
-          <h2 className="text-xl md:text-2xl font-bold">{title}</h2>
+          <h2 className="text-xl font-bold text-foreground md:text-2xl">
+            {title}
+          </h2>
           <FormDescription className="text-sm md:text-base">
             View and change your profile information here.
           </FormDescription>
@@ -73,7 +82,7 @@ const UserProfileForm = ({
                 <Input
                   {...field}
                   disabled
-                  className="bg-white text-sm md:text-base"
+                  className="text-sm md:text-base"
                 />
               </FormControl>
             </FormItem>
@@ -87,14 +96,14 @@ const UserProfileForm = ({
             <FormItem>
               <FormLabel className="text-sm md:text-base">Name</FormLabel>
               <FormControl>
-                <Input {...field} className="bg-white text-sm md:text-base" />
+                <Input {...field} className="text-sm md:text-base" />
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
 
-        <div className="flex flex-col md:flex-row gap-4">
+        <div className="flex flex-col gap-4 md:flex-row">
           <FormField
             control={form.control}
             name="addressLine1"
@@ -104,7 +113,7 @@ const UserProfileForm = ({
                   Address Line 1
                 </FormLabel>
                 <FormControl>
-                  <Input {...field} className="bg-white text-sm md:text-base" />
+                  <Input {...field} className="text-sm md:text-base" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -117,7 +126,7 @@ const UserProfileForm = ({
               <FormItem className="flex-1">
                 <FormLabel className="text-sm md:text-base">City</FormLabel>
                 <FormControl>
-                  <Input {...field} className="bg-white text-sm md:text-base" />
+                  <Input {...field} className="text-sm md:text-base" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -130,7 +139,7 @@ const UserProfileForm = ({
               <FormItem className="flex-1">
                 <FormLabel className="text-sm md:text-base">Country</FormLabel>
                 <FormControl>
-                  <Input {...field} className="bg-white text-sm md:text-base" />
+                  <Input {...field} className="text-sm md:text-base" />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -150,7 +159,7 @@ const UserProfileForm = ({
                   {...field}
                   type="tel"
                   placeholder="+1234567890"
-                  className="bg-white text-sm md:text-base"
+                  className="text-sm md:text-base"
                 />
               </FormControl>
               <FormDescription className="text-xs md:text-sm">
@@ -164,10 +173,7 @@ const UserProfileForm = ({
         {isLoading ? (
           <ButtonLoading />
         ) : (
-          <Button
-            type="submit"
-            className="bg-orange-500 text-sm md:text-base px-6 py-2"
-          >
+          <Button type="submit" className="px-6 py-2 text-sm font-bold md:text-base">
             {buttonText}
           </Button>
         )}
