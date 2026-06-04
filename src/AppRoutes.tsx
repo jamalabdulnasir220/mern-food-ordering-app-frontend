@@ -7,6 +7,7 @@ import AuthCallBackPage from "./pages/AuthCallBackPage";
 import UserProfilePage from "./pages/UserProfilePage";
 
 import ProtectRoute from "./auth/ProtectRoute";
+import CustomerOnlyRoute from "./auth/CustomerOnlyRoute";
 import RestaurantManagerRoute from "./auth/RestaurantManagerRoute";
 import CustomerRoute from "./auth/CustomerRoute";
 import ManageRestaurantPage from "./pages/ManageRestaurantPage";
@@ -14,6 +15,9 @@ import SearchPage from "./pages/SearchPage";
 import DetailPage from "./pages/DetailPage";
 import OrderStatusPage from "./pages/OrderStatusPage";
 import SignupPage from "./pages/SignupPage";
+import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
+import TermsOfServicePage from "./pages/TermsOfServicePage";
+import ContactPage from "./pages/ContactPage";
 import FavoritesPage from "./pages/FavoritesPage";
 import AdminRoute from "./auth/AdminRoute";
 import AdminDashboardPage from "./pages/AdminDashboardPage";
@@ -40,6 +44,30 @@ const AppRoutes = () => {
         }
       />
       <Route path="/signup" element={<SignupPage />} />
+      <Route
+        path="/privacy"
+        element={
+          <CustomerLayout showHero={false}>
+            <PrivacyPolicyPage />
+          </CustomerLayout>
+        }
+      />
+      <Route
+        path="/terms"
+        element={
+          <CustomerLayout showHero={false}>
+            <TermsOfServicePage />
+          </CustomerLayout>
+        }
+      />
+      <Route
+        path="/contact"
+        element={
+          <CustomerLayout showHero={false}>
+            <ContactPage />
+          </CustomerLayout>
+        }
+      />
       <Route element={<CustomerRoute />}>
         <Route
           path="/search/:city"
@@ -58,7 +86,7 @@ const AppRoutes = () => {
           }
         />
       </Route>
-      <Route element={<ProtectRoute />}>
+      <Route element={<CustomerOnlyRoute />}>
         <Route
           path="/order-status"
           element={
@@ -68,18 +96,20 @@ const AppRoutes = () => {
           }
         />
         <Route
-          path="/user-profile"
-          element={
-            <CustomerLayout>
-              <UserProfilePage />
-            </CustomerLayout>
-          }
-        />
-        <Route
           path="/favorites"
           element={
             <CustomerLayout>
               <FavoritesPage />
+            </CustomerLayout>
+          }
+        />
+      </Route>
+      <Route element={<ProtectRoute />}>
+        <Route
+          path="/user-profile"
+          element={
+            <CustomerLayout>
+              <UserProfilePage />
             </CustomerLayout>
           }
         />

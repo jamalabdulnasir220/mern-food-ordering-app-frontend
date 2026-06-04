@@ -6,6 +6,7 @@ import Auth0ProviderWithNavigate from "./auth/Auth0ProviderWithNavigate.tsx";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ThemeProvider } from "@/components/theme-provider";
 import ThemedToaster from "@/components/ThemedToaster";
+import ScrollToTop from "@/components/ScrollToTop";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -25,6 +26,7 @@ window.__TANSTACK_QUERY_CLIENT__ = queryClient;
 
 createRoot(document.getElementById("root")!).render(
   <Router>
+    <ScrollToTop />
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
         <Auth0ProviderWithNavigate>

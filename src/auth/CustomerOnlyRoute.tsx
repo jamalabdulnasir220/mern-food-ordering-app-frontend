@@ -3,9 +3,9 @@ import { useAuth0 } from "@auth0/auth0-react";
 import { Outlet } from "react-router-dom";
 import { useGetMyUser } from "@/api/authRouter";
 import RedirectWithToast from "./RedirectWithToast";
-import { getHomePathForRole } from "./roleRedirects";
 
-const AdminRoute = () => {
+/** Authenticated customers only (order status, favorites, etc.). */
+const CustomerOnlyRoute = () => {
   const { isAuthenticated, isLoading } = useAuth0();
   const { currentUser, isPending } = useGetMyUser();
 
@@ -17,7 +17,7 @@ const AdminRoute = () => {
     return (
       <RedirectWithToast
         to="/signup"
-        message="Sign in with an admin account to access this page."
+        message="Sign in as a customer to access this page."
       />
     );
   }
@@ -26,11 +26,20 @@ const AdminRoute = () => {
     return <PageLoader label="Loading your account..." />;
   }
 
-  if (currentUser?.role !== "admin") {
+  if (currentUser?.role === "restaurant_manager") {
     return (
       <RedirectWithToast
-        to={getHomePathForRole(currentUser?.role)}
-        message="This page is only for administrators."
+        to="/manager-dashboard"
+        message="Restaurant managers use the manager dashboard instead."
+      />
+    );
+  }
+
+  if (currentUser?.role === "admin") {
+    return (
+      <RedirectWithToast
+        to="/admin"
+        message="Admins use the admin dashboard instead."
       />
     );
   }
@@ -38,4 +47,4 @@ const AdminRoute = () => {
   return <Outlet />;
 };
 
-export default AdminRoute;
+export default CustomerOnlyRoute;
