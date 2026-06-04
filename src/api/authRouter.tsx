@@ -224,6 +224,6 @@ export const useGetMyUser = () => {
 
   return {
     currentUser,
-    isPending,
+    isPending: isAuthenticated && isPending,
   };
 };
